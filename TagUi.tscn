@@ -1,0 +1,88 @@
+[gd_scene load_steps=6 format=3 uid="uid://cnqmreoccdwhp"]
+
+[ext_resource type="Script" uid="uid://cu11smy7acvgd" path="res://TagUi.cs" id="1_bwdjv"]
+
+[sub_resource type="Animation" id="Animation_bwdjv"]
+resource_name = "Default"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0.627451)]
+}
+
+[sub_resource type="Animation" id="Animation_n7mmq"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0.627451)]
+}
+
+[sub_resource type="Animation" id="Animation_lni2q"]
+resource_name = "Selected"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_jlq81"]
+_data = {
+&"Default": SubResource("Animation_bwdjv"),
+&"RESET": SubResource("Animation_n7mmq"),
+&"Selected": SubResource("Animation_lni2q")
+}
+
+[node name="Tag" type="MarginContainer" node_paths=PackedStringArray("TagName", "Background", "AnimationPlayer")]
+modulate = Color(1, 1, 1, 0.627451)
+offset_right = 78.0
+offset_bottom = 32.0
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 2
+script = ExtResource("1_bwdjv")
+TagName = NodePath("Label")
+Background = NodePath("Background")
+AnimationPlayer = NodePath("AnimationPlayer")
+metadata/_edit_use_anchors_ = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_jlq81")
+}
+autoplay = "Default"
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 2
+text = "Tag Name"
+horizontal_alignment = 1
+vertical_alignment = 1

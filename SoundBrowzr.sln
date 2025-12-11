@@ -1,0 +1,19 @@
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundBrowzr", "SoundBrowzr.csproj", "{0DCD94A8-A34B-45D9-BC06-CEC17B333C56}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+	Debug|Any CPU = Debug|Any CPU
+	ExportDebug|Any CPU = ExportDebug|Any CPU
+	ExportRelease|Any CPU = ExportRelease|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0DCD94A8-A34B-45D9-BC06-CEC17B333C56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0DCD94A8-A34B-45D9-BC06-CEC17B333C56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0DCD94A8-A34B-45D9-BC06-CEC17B333C56}.ExportDebug|Any CPU.ActiveCfg = ExportDebug|Any CPU
+		{0DCD94A8-A34B-45D9-BC06-CEC17B333C56}.ExportDebug|Any CPU.Build.0 = ExportDebug|Any CPU
+		{0DCD94A8-A34B-45D9-BC06-CEC17B333C56}.ExportRelease|Any CPU.ActiveCfg = ExportRelease|Any CPU
+		{0DCD94A8-A34B-45D9-BC06-CEC17B333C56}.ExportRelease|Any CPU.Build.0 = ExportRelease|Any CPU
+	EndGlobalSection
+EndGlobal

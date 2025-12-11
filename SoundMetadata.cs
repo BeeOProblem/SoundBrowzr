@@ -1,0 +1,76 @@
+using Godot;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+
+namespace SoundBrowzr
+{
+    internal class SoundMetadata
+    {
+        const string MetaFileExtension = ".sbzm";
+
+        string soundFilePath;
+        List<TagDefinition> tags;
+
+        public delegate TagDefinition TagByNameFunction(string tag);
+
+        public IEnumerable<TagDefinition> Tags
+        {
+            get
+            {
+                return tags;
+            }
+        }
+
+        public SoundMetadata(string path)
+        {
+            tags = new List<TagDefinition>();
+            soundFilePath = path;
+        }
+
+        public void TryLoadMetaFile(TagByNameFunction tagProvider)
+        {
+            try
+            {
+                using (StreamReader sr = new StreamReader(soundFilePath + MetaFileExtension))
+                {
+                    GD.Print("reading ", soundFilePath + MetaFileExtension);
+                    string tagsLine = sr.ReadLine();
+                    string[] tagsFromFile = tagsLine.Split(',');
+                    foreach (string tag in tagsFromFile)
+                    {
+                        GD.Print("got tag ", tag);
+                        TagDefinition foundTag = tagProvider(tag);
+                        if (tag != null)
+                        {
+                            GD.Print("added to metadata in memory");
+                            tags.Add(foundTag);
+                        }
+                    }
+                }
+            }
+            catch (FileNotFoundException)
+            {
+                // ignore file not found since meta files are only created when metadata assignment is done
+            }
+        }
+
+        public void SaveMetaFile()
+        {
+            using (StreamWriter sw = new StreamWriter(soundFilePath + MetaFileExtension))
+            {
+                sw.WriteLine(String.Join(",", tags.Select((tag) => tag.Name)));
+            }
+        }
+
+        public void SetTags(IEnumerable<TagDefinition> newTags)
+        {
+            tags.Clear();
+            foreach (var tag in newTags)
+            {
+                tags.Add(tag);
+            }
+        }
+    }
+}

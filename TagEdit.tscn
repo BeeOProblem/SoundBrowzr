@@ -1,0 +1,61 @@
+[gd_scene load_steps=2 format=3 uid="uid://dslev267kwqbq"]
+
+[ext_resource type="Script" uid="uid://dhxi4tkfvk0ip" path="res://TagEditUi.cs" id="1_q4uoq"]
+
+[node name="TagEdit" type="Window" node_paths=PackedStringArray("TagName", "TagColor")]
+oversampling_override = 1.0
+title = "Edit Tag"
+initial_position = 2
+size = Vector2i(400, 90)
+transient = true
+exclusive = true
+unresizable = true
+popup_window = true
+script = ExtResource("1_q4uoq")
+TagName = NodePath("TagName")
+TagColor = NodePath("ColorPickerButton")
+
+[node name="TagNameLabel" type="Label" parent="."]
+offset_top = 8.0
+offset_right = 78.0
+offset_bottom = 31.0
+text = "Tag Name"
+
+[node name="TagName" type="LineEdit" parent="."]
+offset_left = 82.0
+offset_right = 400.0
+offset_bottom = 40.0
+placeholder_text = "name goes here"
+
+[node name="TagColorLabel" type="Label" parent="."]
+offset_top = 56.0
+offset_right = 42.0
+offset_bottom = 79.0
+text = "Color"
+
+[node name="ColorPickerButton" type="ColorPickerButton" parent="."]
+offset_left = 80.0
+offset_top = 48.0
+offset_right = 192.0
+offset_bottom = 88.0
+color = Color(1, 1, 1, 1)
+
+[node name="Ok" type="Button" parent="."]
+offset_left = 288.0
+offset_top = 48.0
+offset_right = 399.0
+offset_bottom = 88.0
+text = "OK"
+
+[node name="Cancel" type="Button" parent="."]
+offset_left = 200.0
+offset_top = 48.0
+offset_right = 279.0
+offset_bottom = 87.0
+text = "Cancel"
+
+[connection signal="close_requested" from="." to="." method="_CancelClicked"]
+[connection signal="text_changed" from="TagName" to="." method="_TagNameChanged"]
+[connection signal="color_changed" from="ColorPickerButton" to="." method="_TagColorChanged"]
+[connection signal="pressed" from="Ok" to="." method="_OkClicked"]
+[connection signal="pressed" from="Cancel" to="." method="_CancelClicked"]

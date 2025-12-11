@@ -1,0 +1,120 @@
+[gd_scene load_steps=3 format=3 uid="uid://drfvlf0053jsf"]
+
+[ext_resource type="Script" uid="uid://dw2gsr4y44akk" path="res://ConfigWindow.cs" id="1_yvde8"]
+[ext_resource type="PackedScene" uid="uid://cxbuy4uxgmsal" path="res://SelectableLabel.tscn" id="2_ngj5b"]
+
+[node name="ConfigWindow" type="Window" node_paths=PackedStringArray("OkButton", "CancelButton", "ExistingPathsContainer", "DirBrowseDialog")]
+oversampling_override = 1.0
+title = "Configuration"
+initial_position = 2
+size = Vector2i(500, 500)
+transient = true
+exclusive = true
+popup_window = true
+min_size = Vector2i(300, 200)
+script = ExtResource("1_yvde8")
+OkButton = NodePath("Ok")
+CancelButton = NodePath("Cancel")
+ExistingPathsContainer = NodePath("PathContainer/ScrollContainer/VBoxContainer")
+DirBrowseDialog = NodePath("FileDialog")
+SelectableLabel = ExtResource("2_ngj5b")
+
+[node name="FileDialog" type="FileDialog" parent="."]
+oversampling_override = 1.0
+title = "Open a Directory"
+initial_position = 2
+file_mode = 2
+display_mode = 1
+access = 2
+use_native_dialog = true
+
+[node name="Label" type="Label" parent="."]
+offset_top = 4.0
+offset_right = 100.0
+offset_bottom = 27.0
+text = "Search Paths"
+
+[node name="Toolbox" type="HBoxContainer" parent="."]
+offset_top = 32.0
+offset_right = 184.0
+offset_bottom = 64.0
+size_flags_horizontal = 3
+
+[node name="Add" type="Button" parent="Toolbox"]
+layout_mode = 2
+text = "Add"
+
+[node name="Change" type="Button" parent="Toolbox"]
+layout_mode = 2
+text = "Change"
+
+[node name="Remove" type="Button" parent="Toolbox"]
+layout_mode = 2
+text = "Remove"
+
+[node name="PathContainer" type="Panel" parent="."]
+z_index = -5
+anchors_preset = -1
+anchor_right = 0.99200004
+anchor_bottom = 1.0
+offset_left = 2.0
+offset_top = 64.0
+offset_right = -3.0517578e-05
+offset_bottom = -52.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ScrollContainer" type="ScrollContainer" parent="PathContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 2.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PathContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Ok" type="Button" parent="."]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -116.0
+offset_top = -45.0
+offset_right = -5.0
+offset_bottom = -5.0
+grow_horizontal = 0
+grow_vertical = 0
+size_flags_horizontal = 8
+size_flags_vertical = 8
+text = "OK"
+
+[node name="Cancel" type="Button" parent="."]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -200.0
+offset_top = -44.0
+offset_right = -121.0
+offset_bottom = -5.0
+grow_horizontal = 0
+grow_vertical = 0
+size_flags_horizontal = 8
+size_flags_vertical = 8
+text = "Cancel"
+
+[connection signal="close_requested" from="." to="." method="_CancelClicked"]
+[connection signal="visibility_changed" from="." to="." method="_OnOpen"]
+[connection signal="canceled" from="FileDialog" to="." method="_DirBrowseCancel"]
+[connection signal="dir_selected" from="FileDialog" to="." method="_DirBrowseSelect"]
+[connection signal="pressed" from="Toolbox/Add" to="." method="_AddPathClicked"]
+[connection signal="pressed" from="Toolbox/Change" to="." method="_ChangePathClicked"]
+[connection signal="pressed" from="Toolbox/Remove" to="." method="_RemovePathClicked"]
+[connection signal="pressed" from="Ok" to="." method="_OkClicked"]
+[connection signal="pressed" from="Cancel" to="." method="_CancelClicked"]

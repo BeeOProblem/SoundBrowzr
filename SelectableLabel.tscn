@@ -1,0 +1,23 @@
+[gd_scene load_steps=2 format=3 uid="uid://cxbuy4uxgmsal"]
+
+[ext_resource type="Script" uid="uid://dl5nqsc46h0nj" path="res://SelectableLabel.cs" id="1_wmxra"]
+
+[node name="SelectableLabel" type="Label"]
+offset_right = 42.0
+offset_bottom = 23.0
+size_flags_horizontal = 3
+mouse_filter = 0
+text = "Label"
+script = ExtResource("1_wmxra")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+visible = false
+z_index = -1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.64, 0.64, 0.64, 1)

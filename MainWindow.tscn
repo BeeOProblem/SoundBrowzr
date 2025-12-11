@@ -1,0 +1,292 @@
+[gd_scene load_steps=7 format=3 uid="uid://ddafk8kdlwqum"]
+
+[ext_resource type="Script" uid="uid://1jol0y84d4cf" path="res://MainWindow.cs" id="1_p4mt5"]
+[ext_resource type="PackedScene" uid="uid://cnqmreoccdwhp" path="res://TagUi.tscn" id="2_7qsqj"]
+[ext_resource type="PackedScene" uid="uid://dslev267kwqbq" path="res://TagEdit.tscn" id="3_3ygwi"]
+[ext_resource type="PackedScene" uid="uid://drfvlf0053jsf" path="res://ConfigWindow.tscn" id="3_e7h7s"]
+[ext_resource type="Script" uid="uid://b8iamykvkth34" path="res://BasicTagList.cs" id="4_l4su8"]
+[ext_resource type="PackedScene" uid="uid://cbx4rtuy0inal" path="res://BasicTagList.tscn" id="4_mgnd2"]
+
+[node name="MainWindow" type="Control" node_paths=PackedStringArray("ConfigWindow", "TagSearchText", "AvailableTags", "TagEditor", "FilterIncludeTags", "FilterExcludeTags", "FileSystemTree", "FilePathLabel", "AudioStreamPlayer", "PlaybackPosition", "VolumeSlider", "AssignedTags")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_p4mt5")
+ConfigWindow = NodePath("ConfigWindow")
+TagSearchText = NodePath("HSplitContainer/FileBrowser/TagFilters/ManageTags/ManageTags/Toolbar/NameSearch")
+AvailableTags = NodePath("HSplitContainer/FileBrowser/TagFilters/ManageTags/ManageTags/AvailableTags")
+TagEditor = NodePath("TagEdit")
+FilterIncludeTags = NodePath("HSplitContainer/FileBrowser/TagFilters/FilterByTags/FilteredTags/Included")
+FilterExcludeTags = NodePath("HSplitContainer/FileBrowser/TagFilters/FilterByTags/FilteredTags/Excluded")
+FileSystemTree = NodePath("HSplitContainer/FileBrowser/FileTree")
+FilePathLabel = NodePath("HSplitContainer/SoundInfo/Toolbar/SoundName")
+AudioStreamPlayer = NodePath("AudioStreamPlayer")
+PlaybackPosition = NodePath("HSplitContainer/SoundInfo/SoundPlayer/PlaybackPos")
+VolumeSlider = NodePath("HSplitContainer/SoundInfo/SoundPlayer/Volume")
+AssignedTags = NodePath("HSplitContainer/SoundInfo/TagEditor/HBoxContainer/AssignedTags/VBoxContainer/AssignedTagList")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+
+[node name="TagEdit" parent="." instance=ExtResource("3_3ygwi")]
+visible = false
+
+[node name="ConfigWindow" parent="." instance=ExtResource("3_e7h7s")]
+visible = false
+
+[node name="HSplitContainer" type="HSplitContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+split_offset = 120
+drag_area_highlight_in_editor = true
+
+[node name="FileBrowser" type="VBoxContainer" parent="HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TagFilters" type="HBoxContainer" parent="HSplitContainer/FileBrowser"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ManageTags" type="Panel" parent="HSplitContainer/FileBrowser/TagFilters"]
+custom_minimum_size = Vector2(450, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ManageTags" type="VBoxContainer" parent="HSplitContainer/FileBrowser/TagFilters/ManageTags"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="HSplitContainer/FileBrowser/TagFilters/ManageTags/ManageTags"]
+layout_mode = 2
+text = "Manage Tags"
+
+[node name="Toolbar" type="HBoxContainer" parent="HSplitContainer/FileBrowser/TagFilters/ManageTags/ManageTags"]
+layout_mode = 2
+
+[node name="NameSearch" type="LineEdit" parent="HSplitContainer/FileBrowser/TagFilters/ManageTags/ManageTags/Toolbar"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "type to search"
+clear_button_enabled = true
+
+[node name="CreateTag" type="Button" parent="HSplitContainer/FileBrowser/TagFilters/ManageTags/ManageTags/Toolbar"]
+layout_mode = 2
+text = "Create"
+
+[node name="EditTag" type="Button" parent="HSplitContainer/FileBrowser/TagFilters/ManageTags/ManageTags/Toolbar"]
+layout_mode = 2
+text = "Edit"
+
+[node name="DeleteTag" type="Button" parent="HSplitContainer/FileBrowser/TagFilters/ManageTags/ManageTags/Toolbar"]
+layout_mode = 2
+text = "Delete"
+
+[node name="AvailableTags" parent="HSplitContainer/FileBrowser/TagFilters/ManageTags/ManageTags" instance=ExtResource("4_mgnd2")]
+layout_mode = 2
+
+[node name="FilterByTags" type="Panel" parent="HSplitContainer/FileBrowser/TagFilters"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="FilteredTags" type="VBoxContainer" parent="HSplitContainer/FileBrowser/TagFilters/FilterByTags"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+
+[node name="ResetFilter" type="Button" parent="HSplitContainer/FileBrowser/TagFilters/FilterByTags/FilteredTags"]
+layout_mode = 2
+text = "Reset Filter"
+
+[node name="IncludeToolbox" type="HBoxContainer" parent="HSplitContainer/FileBrowser/TagFilters/FilterByTags/FilteredTags"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HSplitContainer/FileBrowser/TagFilters/FilterByTags/FilteredTags/IncludeToolbox"]
+layout_mode = 2
+text = "Include Tags"
+
+[node name="AddInclude" type="Button" parent="HSplitContainer/FileBrowser/TagFilters/FilterByTags/FilteredTags/IncludeToolbox"]
+layout_mode = 2
+text = "+"
+
+[node name="Included" parent="HSplitContainer/FileBrowser/TagFilters/FilterByTags/FilteredTags" instance=ExtResource("4_mgnd2")]
+layout_mode = 2
+AllTagsSelected = true
+
+[node name="ExcludeToolbox" type="HBoxContainer" parent="HSplitContainer/FileBrowser/TagFilters/FilterByTags/FilteredTags"]
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="HSplitContainer/FileBrowser/TagFilters/FilterByTags/FilteredTags/ExcludeToolbox"]
+layout_mode = 2
+text = "Exclude Tags"
+
+[node name="AddExclude" type="Button" parent="HSplitContainer/FileBrowser/TagFilters/FilterByTags/FilteredTags/ExcludeToolbox"]
+layout_mode = 2
+text = "+"
+
+[node name="Excluded" parent="HSplitContainer/FileBrowser/TagFilters/FilterByTags/FilteredTags" instance=ExtResource("4_mgnd2")]
+layout_mode = 2
+AllTagsSelected = true
+
+[node name="FileTree" type="Tree" parent="HSplitContainer/FileBrowser"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 1.5
+
+[node name="Config" type="Button" parent="HSplitContainer/FileBrowser/FileTree"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -114.0
+offset_top = 3.0
+offset_right = -26.0
+offset_bottom = 34.0
+grow_horizontal = 0
+text = "Configure"
+
+[node name="SoundInfo" type="VBoxContainer" parent="HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SoundPlayer" type="Panel" parent="HSplitContainer/SoundInfo"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+
+[node name="Volume" type="VSlider" parent="HSplitContainer/SoundInfo/SoundPlayer"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 0.88
+offset_left = -24.0
+offset_bottom = -1.52588e-05
+grow_horizontal = 0
+grow_vertical = 2
+max_value = 2.0
+step = 0.01
+tick_count = 10
+ticks_on_borders = true
+
+[node name="PlaybackPos" type="HSlider" parent="HSplitContainer/SoundInfo/SoundPlayer"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.014
+anchor_top = 1.0
+anchor_right = 0.958
+anchor_bottom = 1.0
+offset_left = -5.98
+offset_top = -24.0
+offset_right = -0.0600586
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 0
+step = 0.05
+scrollable = false
+ticks_on_borders = true
+
+[node name="Toolbar" type="HBoxContainer" parent="HSplitContainer/SoundInfo"]
+layout_mode = 2
+
+[node name="Play" type="Button" parent="HSplitContainer/SoundInfo/Toolbar"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+text = "Play Sound"
+
+[node name="Stop" type="Button" parent="HSplitContainer/SoundInfo/Toolbar"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+text = "Stop"
+
+[node name="SoundName" type="Label" parent="HSplitContainer/SoundInfo/Toolbar"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "F:\\Potential Game Assets\\Sounds\\Chipsounds\\164855__dayofdagon__bit-bomber2.ogg"
+clip_text = true
+
+[node name="TagEditor" type="Control" parent="HSplitContainer/SoundInfo"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HSplitContainer/SoundInfo/TagEditor"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="AssignedTags" type="Panel" parent="HSplitContainer/SoundInfo/TagEditor/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HSplitContainer/SoundInfo/TagEditor/HBoxContainer/AssignedTags"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Toolbar" type="HBoxContainer" parent="HSplitContainer/SoundInfo/TagEditor/HBoxContainer/AssignedTags/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HSplitContainer/SoundInfo/TagEditor/HBoxContainer/AssignedTags/VBoxContainer/Toolbar"]
+layout_mode = 2
+text = "Assigned Tags"
+
+[node name="AddSoundTag" type="Button" parent="HSplitContainer/SoundInfo/TagEditor/HBoxContainer/AssignedTags/VBoxContainer/Toolbar"]
+layout_mode = 2
+text = "Add"
+
+[node name="RemoveSoundTag" type="Button" parent="HSplitContainer/SoundInfo/TagEditor/HBoxContainer/AssignedTags/VBoxContainer/Toolbar"]
+layout_mode = 2
+text = "Remove"
+
+[node name="AssignedTagList" type="ScrollContainer" parent="HSplitContainer/SoundInfo/TagEditor/HBoxContainer/AssignedTags/VBoxContainer" node_paths=PackedStringArray("TagContainer")]
+layout_mode = 2
+size_flags_vertical = 3
+script = ExtResource("4_l4su8")
+TagContainer = NodePath("HFlowContainer")
+TagUiScene = ExtResource("2_7qsqj")
+
+[node name="HFlowContainer" type="FlowContainer" parent="HSplitContainer/SoundInfo/TagEditor/HBoxContainer/AssignedTags/VBoxContainer/AssignedTagList"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[connection signal="pressed" from="HSplitContainer/FileBrowser/TagFilters/ManageTags/ManageTags/Toolbar/CreateTag" to="." method="_OnCreateTagClicked"]
+[connection signal="pressed" from="HSplitContainer/FileBrowser/TagFilters/FilterByTags/FilteredTags/ResetFilter" to="." method="_OnFilterReset"]
+[connection signal="pressed" from="HSplitContainer/FileBrowser/TagFilters/FilterByTags/FilteredTags/IncludeToolbox/AddInclude" to="." method="_OnIncludeAdd"]
+[connection signal="pressed" from="HSplitContainer/FileBrowser/TagFilters/FilterByTags/FilteredTags/ExcludeToolbox/AddExclude" to="." method="_OnExcludeAdd"]
+[connection signal="item_selected" from="HSplitContainer/FileBrowser/FileTree" to="." method="_OnFileTreeItemSelected"]
+[connection signal="pressed" from="HSplitContainer/FileBrowser/FileTree/Config" to="." method="_OnOpenConfig"]
+[connection signal="value_changed" from="HSplitContainer/SoundInfo/SoundPlayer/Volume" to="." method="_OnVolumeChanged"]
+[connection signal="drag_ended" from="HSplitContainer/SoundInfo/SoundPlayer/PlaybackPos" to="." method="_OnPlaybackPosDragEnd"]
+[connection signal="drag_started" from="HSplitContainer/SoundInfo/SoundPlayer/PlaybackPos" to="." method="_OnPlaybackPosDragStart"]
+[connection signal="value_changed" from="HSplitContainer/SoundInfo/SoundPlayer/PlaybackPos" to="." method="_OnPlaybackPosChanged"]
+[connection signal="pressed" from="HSplitContainer/SoundInfo/Toolbar/Play" to="." method="_OnPlay"]
+[connection signal="pressed" from="HSplitContainer/SoundInfo/Toolbar/Stop" to="." method="_OnStop"]
+[connection signal="pressed" from="HSplitContainer/SoundInfo/TagEditor/HBoxContainer/AssignedTags/VBoxContainer/Toolbar/AddSoundTag" to="." method="_OnAssignedTagsAdd"]
+[connection signal="pressed" from="HSplitContainer/SoundInfo/TagEditor/HBoxContainer/AssignedTags/VBoxContainer/Toolbar/RemoveSoundTag" to="." method="_OnAssignedTagsRemove"]
