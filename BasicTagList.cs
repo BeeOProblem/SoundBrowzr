@@ -1,7 +1,6 @@
 using Godot;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 public partial class BasicTagList : ScrollContainer
 {
@@ -98,6 +97,16 @@ public partial class BasicTagList : ScrollContainer
         {
             AddTag(tag);
         }
+    }
+
+    public void ClearSelection()
+    {
+        foreach(var tag in tagControls)
+        {
+            tag.SetSelectedNoSignal(false);
+        }
+
+        selectedTags.Clear();
     }
 
     public override void _Ready()

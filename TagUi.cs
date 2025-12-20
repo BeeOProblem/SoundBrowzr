@@ -24,7 +24,16 @@ public partial class TagUi : Control
 
         set
         {
+            if(tagDefinition != null)
+            {
+                tagDefinition.ColorChanged -= OnColorChanged;
+                tagDefinition.NameChanged -= OnNameChanged;
+            }
+
             tagDefinition = value;
+            tagDefinition.ColorChanged += OnColorChanged;
+            tagDefinition.NameChanged += OnNameChanged;
+
             TagName.Text = value.Name;
             Background.SelfModulate = value.Color;
         }
@@ -40,7 +49,16 @@ public partial class TagUi : Control
     private bool pressed;
     private bool selected;
 
-    internal void SetSelectedNoSignal(bool selected)
+    public override void _ExitTree()
+    {
+        if (tagDefinition != null)
+        {
+            tagDefinition.ColorChanged -= OnColorChanged;
+            tagDefinition.NameChanged -= OnNameChanged;
+        }
+    }
+
+    public void SetSelectedNoSignal(bool selected)
     {
         this.selected = selected;
         if (selected)
@@ -51,6 +69,16 @@ public partial class TagUi : Control
         {
             AnimationPlayer.Play("Default", 0);
         }
+    }
+
+    public void OnColorChanged(object sender, EventArgs e)
+    {
+        Background.SelfModulate = tagDefinition.Color;
+    }
+
+    public void OnNameChanged(object sender, EventArgs e)
+    {
+        TagName.Text = tagDefinition.Name;
     }
 
     public override void _GuiInput(InputEvent @event)

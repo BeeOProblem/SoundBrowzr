@@ -1,9 +1,46 @@
 using Godot;
+using System;
 
 public class TagDefinition
 {
-    public string Name;
-    public Color Color;
+    private string name;
+    public string Name
+    {
+        get
+        {
+            return name;
+        }
+
+        set
+        {
+            if (value != name)
+            {
+                name = value;
+                NameChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+    }
+
+    private Color color;
+    public Color Color
+    {
+        get
+        {
+            return color;
+        }
+
+        set
+        {
+            if (value != color)
+            {
+                color = value;
+                ColorChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+    }
+
+    public event EventHandler ColorChanged;
+    public event EventHandler NameChanged;
 
     public TagDefinition()
     {
@@ -32,5 +69,11 @@ public class TagDefinition
         string l = Name.ToLowerInvariant();
         string s = newText.ToLowerInvariant();
         return l.Contains(s);
+    }
+
+    public void CopyFrom(TagDefinition modifiedTag)
+    {
+        Name = modifiedTag.Name;
+        Color = modifiedTag.Color;
     }
 }

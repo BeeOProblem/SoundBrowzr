@@ -70,7 +70,6 @@ public partial class MainWindow : Control
 
         VolumeSlider.SetValueNoSignal(AudioStreamPlayer.VolumeLinear);
 
-        ConfigWindow.AllowCancel = false;
         ConfigWindow.OnCancel += _OnConfigChangeCancel;
         ConfigWindow.OnOk += _OnConfigChangeOk;
 
@@ -93,10 +92,12 @@ public partial class MainWindow : Control
 
         if (searchPaths.Count > 0)
         {
+            ConfigWindow.AllowCancel = true;
             RescanFilesystem();
         }
         else
         {
+            ConfigWindow.AllowCancel = false;
             _OnOpenConfig();
         }
     }
@@ -193,6 +194,27 @@ public partial class MainWindow : Control
         TagEditor.OnCancel -= _CreateTagOnCancel;
     }
 
+    private void _OnEditTagClicked()
+    {
+        TagEditor.OnOk += _EditTagOnOk;
+        TagEditor.OnCancel += _EditTagOnCancel;
+        TagEditor.AssignTag(AvailableTags.SelectedTags.First());
+        TagEditor.Show();
+    }
+
+    private void _EditTagOnOk(object sender, EventArgs e)
+    {
+        TagEditor.OnOk -= _EditTagOnOk;
+        TagEditor.OnCancel -= _EditTagOnCancel;
+        SaveTags();
+    }
+
+    private void _EditTagOnCancel(object sender, EventArgs e)
+    {
+        TagEditor.OnOk -= _EditTagOnOk;
+        TagEditor.OnCancel -= _EditTagOnCancel;
+    }
+
     private void _OnIncludeAdd()
     {
         foreach (var tag in AvailableTags.SelectedTags)
@@ -200,6 +222,7 @@ public partial class MainWindow : Control
             FilterIncludeTags.AddTag(tag);
         }
 
+        AvailableTags.ClearSelection();
         UpdateTreeFilter(treeRoot);
     }
 
@@ -215,6 +238,7 @@ public partial class MainWindow : Control
             FilterExcludeTags.AddTag(tag);
         }
 
+        AvailableTags.ClearSelection();
         UpdateTreeFilter(treeRoot);
     }
 
@@ -241,6 +265,7 @@ public partial class MainWindow : Control
 
             selectedSoundInfo.SetTags(AssignedTags.Tags);
             selectedSoundInfo.SaveMetaFile();
+            AvailableTags.ClearSelection();
         }
     }
 

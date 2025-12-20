@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://ddafk8kdlwqum"]
+[gd_scene load_steps=9 format=3 uid="uid://ddafk8kdlwqum"]
 
 [ext_resource type="Script" uid="uid://1jol0y84d4cf" path="res://MainWindow.cs" id="1_p4mt5"]
 [ext_resource type="PackedScene" uid="uid://cnqmreoccdwhp" path="res://TagUi.tscn" id="2_7qsqj"]
@@ -6,6 +6,10 @@
 [ext_resource type="PackedScene" uid="uid://drfvlf0053jsf" path="res://ConfigWindow.tscn" id="3_e7h7s"]
 [ext_resource type="Script" uid="uid://b8iamykvkth34" path="res://BasicTagList.cs" id="4_l4su8"]
 [ext_resource type="PackedScene" uid="uid://cbx4rtuy0inal" path="res://BasicTagList.tscn" id="4_mgnd2"]
+
+[sub_resource type="ImageTexture" id="ImageTexture_e7h7s"]
+
+[sub_resource type="ImageTexture" id="ImageTexture_p4i4y"]
 
 [node name="MainWindow" type="Control" node_paths=PackedStringArray("ConfigWindow", "TagSearchText", "AvailableTags", "TagEditor", "FilterIncludeTags", "FilterExcludeTags", "FileSystemTree", "FilePathLabel", "AudioStreamPlayer", "PlaybackPosition", "VolumeSlider", "AssignedTags")]
 layout_mode = 3
@@ -22,7 +26,7 @@ TagEditor = NodePath("TagEdit")
 FilterIncludeTags = NodePath("HSplitContainer/FileBrowser/TagFilters/FilterByTags/FilteredTags/Included")
 FilterExcludeTags = NodePath("HSplitContainer/FileBrowser/TagFilters/FilterByTags/FilteredTags/Excluded")
 FileSystemTree = NodePath("HSplitContainer/FileBrowser/FileTree")
-FilePathLabel = NodePath("HSplitContainer/SoundInfo/Toolbar/SoundName")
+FilePathLabel = NodePath("HSplitContainer/SoundInfo/SoundName")
 AudioStreamPlayer = NodePath("AudioStreamPlayer")
 PlaybackPosition = NodePath("HSplitContainer/SoundInfo/SoundPlayer/PlaybackPos")
 VolumeSlider = NodePath("HSplitContainer/SoundInfo/SoundPlayer/Volume")
@@ -35,6 +39,8 @@ visible = false
 
 [node name="ConfigWindow" parent="." instance=ExtResource("3_e7h7s")]
 visible = false
+theme_override_icons/close = SubResource("ImageTexture_e7h7s")
+theme_override_icons/close_pressed = SubResource("ImageTexture_p4i4y")
 
 [node name="HSplitContainer" type="HSplitContainer" parent="."]
 layout_mode = 1
@@ -98,6 +104,7 @@ text = "Delete"
 layout_mode = 2
 
 [node name="FilterByTags" type="Panel" parent="HSplitContainer/FileBrowser/TagFilters"]
+custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 
@@ -125,6 +132,10 @@ text = "Include Tags"
 layout_mode = 2
 text = "+"
 
+[node name="RemoveInclude" type="Button" parent="HSplitContainer/FileBrowser/TagFilters/FilterByTags/FilteredTags/IncludeToolbox"]
+layout_mode = 2
+text = "-"
+
 [node name="Included" parent="HSplitContainer/FileBrowser/TagFilters/FilterByTags/FilteredTags" instance=ExtResource("4_mgnd2")]
 layout_mode = 2
 AllTagsSelected = true
@@ -139,6 +150,10 @@ text = "Exclude Tags"
 [node name="AddExclude" type="Button" parent="HSplitContainer/FileBrowser/TagFilters/FilterByTags/FilteredTags/ExcludeToolbox"]
 layout_mode = 2
 text = "+"
+
+[node name="RemoveExclude" type="Button" parent="HSplitContainer/FileBrowser/TagFilters/FilterByTags/FilteredTags/ExcludeToolbox"]
+layout_mode = 2
+text = "-"
 
 [node name="Excluded" parent="HSplitContainer/FileBrowser/TagFilters/FilterByTags/FilteredTags" instance=ExtResource("4_mgnd2")]
 layout_mode = 2
@@ -202,6 +217,24 @@ step = 0.05
 scrollable = false
 ticks_on_borders = true
 
+[node name="Label" type="Label" parent="HSplitContainer/SoundInfo/SoundPlayer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 10
+text = "[waveform not implemented yet]"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SoundName" type="Label" parent="HSplitContainer/SoundInfo"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "F:\\Potential Game Assets\\Sounds\\Chipsounds\\164855__dayofdagon__bit-bomber2.ogg"
+clip_text = true
+
 [node name="Toolbar" type="HBoxContainer" parent="HSplitContainer/SoundInfo"]
 layout_mode = 2
 
@@ -219,11 +252,11 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 text = "Stop"
 
-[node name="SoundName" type="Label" parent="HSplitContainer/SoundInfo/Toolbar"]
+[node name="Open" type="Button" parent="HSplitContainer/SoundInfo/Toolbar"]
+custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
-size_flags_horizontal = 3
-text = "F:\\Potential Game Assets\\Sounds\\Chipsounds\\164855__dayofdagon__bit-bomber2.ogg"
-clip_text = true
+disabled = true
+text = "Open"
 
 [node name="TagEditor" type="Control" parent="HSplitContainer/SoundInfo"]
 layout_mode = 2
@@ -258,11 +291,11 @@ text = "Assigned Tags"
 
 [node name="AddSoundTag" type="Button" parent="HSplitContainer/SoundInfo/TagEditor/HBoxContainer/AssignedTags/VBoxContainer/Toolbar"]
 layout_mode = 2
-text = "Add"
+text = "+"
 
 [node name="RemoveSoundTag" type="Button" parent="HSplitContainer/SoundInfo/TagEditor/HBoxContainer/AssignedTags/VBoxContainer/Toolbar"]
 layout_mode = 2
-text = "Remove"
+text = "-"
 
 [node name="AssignedTagList" type="ScrollContainer" parent="HSplitContainer/SoundInfo/TagEditor/HBoxContainer/AssignedTags/VBoxContainer" node_paths=PackedStringArray("TagContainer")]
 layout_mode = 2
@@ -277,9 +310,12 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [connection signal="pressed" from="HSplitContainer/FileBrowser/TagFilters/ManageTags/ManageTags/Toolbar/CreateTag" to="." method="_OnCreateTagClicked"]
+[connection signal="pressed" from="HSplitContainer/FileBrowser/TagFilters/ManageTags/ManageTags/Toolbar/EditTag" to="." method="_OnEditTagClicked"]
 [connection signal="pressed" from="HSplitContainer/FileBrowser/TagFilters/FilterByTags/FilteredTags/ResetFilter" to="." method="_OnFilterReset"]
 [connection signal="pressed" from="HSplitContainer/FileBrowser/TagFilters/FilterByTags/FilteredTags/IncludeToolbox/AddInclude" to="." method="_OnIncludeAdd"]
+[connection signal="pressed" from="HSplitContainer/FileBrowser/TagFilters/FilterByTags/FilteredTags/IncludeToolbox/RemoveInclude" to="." method="_OnIncludeRemove"]
 [connection signal="pressed" from="HSplitContainer/FileBrowser/TagFilters/FilterByTags/FilteredTags/ExcludeToolbox/AddExclude" to="." method="_OnExcludeAdd"]
+[connection signal="pressed" from="HSplitContainer/FileBrowser/TagFilters/FilterByTags/FilteredTags/ExcludeToolbox/RemoveExclude" to="." method="_OnExcludeRemove"]
 [connection signal="item_selected" from="HSplitContainer/FileBrowser/FileTree" to="." method="_OnFileTreeItemSelected"]
 [connection signal="pressed" from="HSplitContainer/FileBrowser/FileTree/Config" to="." method="_OnOpenConfig"]
 [connection signal="value_changed" from="HSplitContainer/SoundInfo/SoundPlayer/Volume" to="." method="_OnVolumeChanged"]
