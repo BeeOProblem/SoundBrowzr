@@ -1,5 +1,9 @@
 # SoundBrowzr
-A tool for categorizing and searching sound effects
+A tool for categorizing and searching sound effects. I created this because I have thousands of sounds
+and needed something to make searching them easier.
+
+This is a very early version of the tool, if you have any suggestions or run into any bugs feel free
+to log an issue.
 
 # How to Use
 When you first open SoundBrowzr you will be shown the config dialog. Here you can choose which folders
