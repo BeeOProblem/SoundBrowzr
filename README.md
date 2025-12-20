@@ -13,6 +13,8 @@ After you choose the folders to scan SoundBrowzr will scan them. If a lot of fol
 this may cause SoundBrowzr to freeze briefly. This should be fixed in a future release. Once this
 is done you should see the main SoundBrowzr window.
 
+In future versions you will also be able to pick a sound editor to open files in.
+
 ## The Main Window
 ![SoundBrowzr main view](/screenshots/main.png)
 
@@ -21,7 +23,7 @@ Options for filtering the sound list by tags are also found here, more on that l
 or delete tags by clicking the buttons under Manage Tags. Create and Edit both open the tag editor.
 
 ## Editing Tags
-~[SoundBrowzr tag editor](/screenshots/tag.png)
+![SoundBrowzr tag editor](/screenshots/tag.png)
 
 Tags are used to categorize sounds so they're easier to find. Each tag has a unique name and a color.
 
@@ -35,6 +37,8 @@ Clicking on a sound file will play it and show what tags are assigned to it, if 
 the sound that is selected appear on the right side of SoundBrowzr. You may assign tags to the selected
 sound effect by clicking the + button on the list of tags. All tags that are selected in the top left
 will be assigned to the sound effect.
+
+In the future the Open button will open the sound in Audacity, Tenacity or whatever tool you choose.
 
 ## Filtering the Sound List
 Tags are used to make searching for specific sound effects easier. Once you've assigned tags to some sounds
