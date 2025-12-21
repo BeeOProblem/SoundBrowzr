@@ -228,7 +228,12 @@ public partial class MainWindow : Control
 
     private void _OnIncludeRemove()
     {
+        foreach (var tag in FilterIncludeTags.SelectedTags)
+        {
+            FilterIncludeTags.RemoveTag(tag);
+        }
 
+        UpdateTreeFilter(treeRoot);
     }
 
     private void _OnExcludeAdd()
@@ -244,7 +249,12 @@ public partial class MainWindow : Control
 
     private void _OnExcludeRemove()
     {
+        foreach (var tag in FilterExcludeTags.SelectedTags)
+        {
+            FilterExcludeTags.RemoveTag(tag);
+        }
 
+        UpdateTreeFilter(treeRoot);
     }
 
     private void _OnFilterReset()
@@ -476,13 +486,13 @@ public partial class MainWindow : Control
     {
         SoundMetadata soundInfo = metadata[soundFile];
         bool shouldInclude = true;
-        foreach (var includedTag in FilterIncludeTags.SelectedTags)
+        foreach (var includedTag in FilterIncludeTags.Tags)
         {
             shouldInclude &= soundInfo.Tags.Contains(includedTag);
             if (!shouldInclude) break;
         }
 
-        foreach (var excludedTag in FilterExcludeTags.SelectedTags)
+        foreach (var excludedTag in FilterExcludeTags.Tags)
         {
             shouldInclude &= !soundInfo.Tags.Contains(excludedTag);
         }

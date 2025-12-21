@@ -138,7 +138,6 @@ text = "-"
 
 [node name="Included" parent="HSplitContainer/FileBrowser/TagFilters/FilterByTags/FilteredTags" instance=ExtResource("4_mgnd2")]
 layout_mode = 2
-AllTagsSelected = true
 
 [node name="ExcludeToolbox" type="HBoxContainer" parent="HSplitContainer/FileBrowser/TagFilters/FilterByTags/FilteredTags"]
 layout_mode = 2
@@ -157,7 +156,6 @@ text = "-"
 
 [node name="Excluded" parent="HSplitContainer/FileBrowser/TagFilters/FilterByTags/FilteredTags" instance=ExtResource("4_mgnd2")]
 layout_mode = 2
-AllTagsSelected = true
 
 [node name="FileTree" type="Tree" parent="HSplitContainer/FileBrowser"]
 layout_mode = 2

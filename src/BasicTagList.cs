@@ -50,6 +50,7 @@ public partial class BasicTagList : ScrollContainer
 
         if (AllTagsSelected)
         {
+            tagUi.SetSelectedNoSignal(true);
             selectedTags.Add(tagUi.Tag);
         }
     }
