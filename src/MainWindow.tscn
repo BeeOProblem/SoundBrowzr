@@ -1,11 +1,11 @@
 [gd_scene load_steps=9 format=3 uid="uid://ddafk8kdlwqum"]
 
 [ext_resource type="Script" uid="uid://1jol0y84d4cf" path="res://MainWindow.cs" id="1_p4mt5"]
-[ext_resource type="PackedScene" uid="uid://cnqmreoccdwhp" path="res://TagUi.tscn" id="2_7qsqj"]
-[ext_resource type="PackedScene" uid="uid://dslev267kwqbq" path="res://TagEdit.tscn" id="3_3ygwi"]
-[ext_resource type="PackedScene" uid="uid://drfvlf0053jsf" path="res://ConfigWindow.tscn" id="3_e7h7s"]
-[ext_resource type="Script" uid="uid://b8iamykvkth34" path="res://BasicTagList.cs" id="4_l4su8"]
-[ext_resource type="PackedScene" uid="uid://cbx4rtuy0inal" path="res://BasicTagList.tscn" id="4_mgnd2"]
+[ext_resource type="PackedScene" uid="uid://cnqmreoccdwhp" path="res://TagUi/TagUi.tscn" id="2_7qsqj"]
+[ext_resource type="PackedScene" uid="uid://dslev267kwqbq" path="res://TagUi/TagEdit.tscn" id="3_3ygwi"]
+[ext_resource type="PackedScene" uid="uid://drfvlf0053jsf" path="res://ConfigUi/ConfigWindow.tscn" id="3_e7h7s"]
+[ext_resource type="Script" uid="uid://b8iamykvkth34" path="res://TagUi/BasicTagList.cs" id="4_l4su8"]
+[ext_resource type="PackedScene" uid="uid://cbx4rtuy0inal" path="res://TagUi/BasicTagList.tscn" id="4_mgnd2"]
 
 [sub_resource type="ImageTexture" id="ImageTexture_e7h7s"]
 

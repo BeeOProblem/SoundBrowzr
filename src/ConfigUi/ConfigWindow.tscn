@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://drfvlf0053jsf"]
 
-[ext_resource type="Script" uid="uid://dw2gsr4y44akk" path="res://ConfigWindow.cs" id="1_yvde8"]
-[ext_resource type="PackedScene" uid="uid://cxbuy4uxgmsal" path="res://SelectableLabel.tscn" id="2_ngj5b"]
+[ext_resource type="Script" uid="uid://dw2gsr4y44akk" path="res://ConfigUi/ConfigWindow.cs" id="1_yvde8"]
+[ext_resource type="PackedScene" uid="uid://cxbuy4uxgmsal" path="res://ConfigUi/SelectableLabel.tscn" id="2_ngj5b"]
 
 [node name="ConfigWindow" type="Window" node_paths=PackedStringArray("OkButton", "CancelButton", "ExistingPathsContainer", "DirBrowseDialog")]
 oversampling_override = 1.0

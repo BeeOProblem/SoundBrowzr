@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://dslev267kwqbq"]
 
-[ext_resource type="Script" uid="uid://dhxi4tkfvk0ip" path="res://TagEditUi.cs" id="1_q4uoq"]
+[ext_resource type="Script" uid="uid://dhxi4tkfvk0ip" path="res://TagUi/TagEditUi.cs" id="1_q4uoq"]
 
 [node name="TagEdit" type="Window" node_paths=PackedStringArray("TagName", "TagColor")]
 oversampling_override = 1.0

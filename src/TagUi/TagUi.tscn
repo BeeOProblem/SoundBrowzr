@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://cnqmreoccdwhp"]
 
-[ext_resource type="Script" uid="uid://cu11smy7acvgd" path="res://TagUi.cs" id="1_bwdjv"]
+[ext_resource type="Script" uid="uid://cu11smy7acvgd" path="res://TagUi/TagUi.cs" id="1_bwdjv"]
 
 [sub_resource type="Animation" id="Animation_bwdjv"]
 resource_name = "Default"
