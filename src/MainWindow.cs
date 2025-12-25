@@ -4,13 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.Marshalling;
 
 public partial class MainWindow : Control
 {
     const string TagDefFilePath = "user://SoundBrowzrTags.dat";
     const string ConfigFilePath = "user://SoundBrowzr.conf";
-
-    private List<string> searchPaths = [];
 
     [Export]
     ConfigWindow ConfigWindow;
@@ -39,13 +38,19 @@ public partial class MainWindow : Control
     [Export]
     Slider VolumeSlider;
     [Export]
+    Button OpenButton;
+    [Export]
     BasicTagList AssignedTags;
-
 
     public event EventHandler<TagEventArgs> TagAdded;
     public event EventHandler<TagEventArgs> TagDeleted;
 
-    // data that gets persisted
+    // persistent config (separate file same path as tag defs)
+    private List<string> searchPaths = [];
+    private string openCommand;
+    private bool openMultiple;
+
+    // persisted metadata (in tags file and sound meta files)
     // TODO?: convert tag def container to its own type that does lookups create/delete etc?
     List<TagDefinition> allTags;
     Dictionary<string, SoundMetadata> metadata;
@@ -60,7 +65,6 @@ public partial class MainWindow : Control
     // transient state (drags etc)
     // TODO: move into script specific for sound playback control
     bool scrubInProgress;
-
 
     public override void _Ready()
     {
@@ -78,10 +82,37 @@ public partial class MainWindow : Control
         {
             using (var configStream = new StreamReader(configPath))
             {
-                string pathFromConfig;
-                while ((pathFromConfig = configStream.ReadLine()) != null)
+                string line;
+                while ((line = configStream.ReadLine()) != null)
                 {
-                    searchPaths.Add(pathFromConfig);
+                    // TODO: this is dumb, parse out section then section name then parse content
+                    if(line == "[search]")
+                    {
+                        string pathFromConfig;
+                        while ((line = pathFromConfig = configStream.ReadLine()) != null)
+                        {
+                            if(line == "[commands]") { break; }
+                            searchPaths.Add(pathFromConfig);
+                        }
+                    }
+
+                    // not an else on purpose (cuz fallthrough from loop above, again this is dumb)
+                    if (line == "[commands]")
+                    {
+                        line = configStream.ReadLine();
+                        string[] split = line.Split('=', StringSplitOptions.TrimEntries);
+                        switch (split[0])
+                        {
+                            case "path":
+                                openCommand = split[1];
+                                break;
+
+                            case "allow_multiple":
+                                openMultiple = false;
+                                bool.TryParse(split[1], out openMultiple);
+                                break;
+                        }
+                    }
                 }
             }
         }
@@ -99,6 +130,13 @@ public partial class MainWindow : Control
         {
             ConfigWindow.AllowCancel = false;
             _OnOpenConfig();
+        }
+
+        OpenButton.Disabled = false;
+        if (string.IsNullOrEmpty(openCommand))
+        {
+            openCommand = "";
+            OpenButton.Disabled = true;
         }
     }
 
@@ -126,13 +164,33 @@ public partial class MainWindow : Control
 
     private void _OnConfigChangeOk(object sender, EventArgs e)
     {
-        // !cancel check is a hack until config sequence is coded
+        bool saveChanges = false;
         if (searchPaths != ConfigWindow.SearchPaths || !ConfigWindow.AllowCancel)
         {
             searchPaths = ConfigWindow.SearchPaths.ToList();
             RescanFilesystem();
+            saveChanges = true;
+        }
+
+        if(openCommand != ConfigWindow.OpenCommand || openMultiple != ConfigWindow.AllowOpenMultiple)
+        {
+            openMultiple = ConfigWindow.AllowOpenMultiple;
+            openCommand = ConfigWindow.OpenCommand;
+
+            OpenButton.Disabled = false;
+            if (string.IsNullOrEmpty(openCommand))
+            {
+                openCommand = "";
+                OpenButton.Disabled = true;
+            }
+            saveChanges = true;
+        }
+
+        if (saveChanges)
+        {
             SaveConfigFile();
         }
+
 
         ConfigWindow.AllowCancel = true;
     }
@@ -147,6 +205,7 @@ public partial class MainWindow : Control
         if (item.HasMeta("file"))
         {
             string soundFilePath = item.GetMeta("file").ToString();
+            selectedPath = soundFilePath;
             selectedSoundInfo = metadata[soundFilePath];
 
             FilePathLabel.Text = item.GetText(0);
@@ -303,6 +362,19 @@ public partial class MainWindow : Control
         AudioStreamPlayer.Stop();
     }
 
+    private void _OnOpen()
+    {
+        System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
+        startInfo.FileName = openCommand;
+        startInfo.RedirectStandardError = false;
+        startInfo.RedirectStandardError = false;
+        startInfo.RedirectStandardOutput = false;
+        startInfo.UseShellExecute = false;
+        startInfo.ArgumentList.Add(selectedPath);
+        
+        System.Diagnostics.Process.Start(startInfo);
+    }
+
     private void _OnPlaybackPosDragStart()
     {
         scrubInProgress = true;
@@ -325,7 +397,12 @@ public partial class MainWindow : Control
             string configPath = ProjectSettings.GlobalizePath(ConfigFilePath);
             using (var configWriter = new StreamWriter(configPath))
             {
-                foreach(var searchPath in searchPaths)
+                configWriter.WriteLine("[commands]");
+                configWriter.WriteLine(string.Format("path = {0}", openCommand));
+                configWriter.WriteLine(string.Format("allow_multiple = ", openMultiple));
+                configWriter.WriteLine();
+                configWriter.WriteLine("[search]");
+                foreach (var searchPath in searchPaths)
                 {
                     configWriter.WriteLine(searchPath);
                 }

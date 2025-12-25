@@ -9,17 +9,24 @@ public partial class ConfigWindow : Window
     {
         None,
         Add,
-        Change
+        Change,
+        FindCommand,
     }
 
     [Export]
     Button OkButton;
     [Export]
     Button CancelButton;
+
     [Export]
     Control ExistingPathsContainer;
     [Export]
     FileDialog DirBrowseDialog;
+
+    [Export]
+    LineEdit OpenCommandPath;
+    [Export]
+    CheckBox OpenAllowMultiple;
 
     [Export]
     PackedScene SelectableLabel;
@@ -52,6 +59,32 @@ public partial class ConfigWindow : Window
         }
     }
 
+    public bool AllowOpenMultiple
+    {
+        get
+        {
+            return OpenAllowMultiple.ButtonPressed;
+        }
+
+        set
+        {
+            OpenAllowMultiple.ButtonPressed = value;
+        }
+    }
+
+    public string OpenCommand
+    {
+        get
+        {
+            return OpenCommandPath.Text;
+        }
+
+        set
+        {
+            OpenCommandPath.Text = value;
+        }
+    }
+
     public event EventHandler OnCancel;
     public event EventHandler OnOk;
 
@@ -81,6 +114,7 @@ public partial class ConfigWindow : Window
     private void _AddPathClicked()
     {
         dirBrowseAction = FileDialogAction.Add;
+        DirBrowseDialog.FileMode = FileDialog.FileModeEnum.OpenDir;
         DirBrowseDialog.Show();
     }
 
@@ -89,6 +123,7 @@ public partial class ConfigWindow : Window
         // TODO: toggle enable of change and delete on select/deselect
         if (selectedPath == null) return;
         dirBrowseAction = FileDialogAction.Change;
+        DirBrowseDialog.FileMode = FileDialog.FileModeEnum.OpenDir;
         DirBrowseDialog.CurrentPath = selectedPath.Text;
         DirBrowseDialog.Show();
     }
@@ -129,6 +164,10 @@ public partial class ConfigWindow : Window
                     OkButton.Disabled = false;
                 }
                 break;
+
+            case FileDialogAction.FindCommand:
+                OpenCommandPath.Text = path;
+                break;
         }
 
         dirBrowseAction = FileDialogAction.None;
@@ -161,5 +200,12 @@ public partial class ConfigWindow : Window
         {
             if(l == selectedPath) selectedPath = null;
         }
+    }
+
+    private void _BrowseCommandClicked()
+    {
+        dirBrowseAction = FileDialogAction.FindCommand;
+        DirBrowseDialog.FileMode = FileDialog.FileModeEnum.OpenFile;
+        DirBrowseDialog.Show();
     }
 }

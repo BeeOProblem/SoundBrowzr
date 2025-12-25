@@ -11,7 +11,7 @@
 
 [sub_resource type="ImageTexture" id="ImageTexture_p4i4y"]
 
-[node name="MainWindow" type="Control" node_paths=PackedStringArray("ConfigWindow", "TagSearchText", "AvailableTags", "TagEditor", "FilterIncludeTags", "FilterExcludeTags", "FileSystemTree", "FilePathLabel", "AudioStreamPlayer", "PlaybackPosition", "VolumeSlider", "AssignedTags")]
+[node name="MainWindow" type="Control" node_paths=PackedStringArray("ConfigWindow", "TagSearchText", "AvailableTags", "TagEditor", "FilterIncludeTags", "FilterExcludeTags", "FileSystemTree", "FilePathLabel", "AudioStreamPlayer", "PlaybackPosition", "VolumeSlider", "OpenButton", "AssignedTags")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -30,6 +30,7 @@ FilePathLabel = NodePath("HSplitContainer/SoundInfo/SoundName")
 AudioStreamPlayer = NodePath("AudioStreamPlayer")
 PlaybackPosition = NodePath("HSplitContainer/SoundInfo/SoundPlayer/PlaybackPos")
 VolumeSlider = NodePath("HSplitContainer/SoundInfo/SoundPlayer/Volume")
+OpenButton = NodePath("HSplitContainer/SoundInfo/Toolbar/Open")
 AssignedTags = NodePath("HSplitContainer/SoundInfo/TagEditor/HBoxContainer/AssignedTags/VBoxContainer/AssignedTagList")
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
@@ -322,5 +323,6 @@ size_flags_vertical = 3
 [connection signal="value_changed" from="HSplitContainer/SoundInfo/SoundPlayer/PlaybackPos" to="." method="_OnPlaybackPosChanged"]
 [connection signal="pressed" from="HSplitContainer/SoundInfo/Toolbar/Play" to="." method="_OnPlay"]
 [connection signal="pressed" from="HSplitContainer/SoundInfo/Toolbar/Stop" to="." method="_OnStop"]
+[connection signal="pressed" from="HSplitContainer/SoundInfo/Toolbar/Open" to="." method="_OnOpen"]
 [connection signal="pressed" from="HSplitContainer/SoundInfo/TagEditor/HBoxContainer/AssignedTags/VBoxContainer/Toolbar/AddSoundTag" to="." method="_OnAssignedTagsAdd"]
 [connection signal="pressed" from="HSplitContainer/SoundInfo/TagEditor/HBoxContainer/AssignedTags/VBoxContainer/Toolbar/RemoveSoundTag" to="." method="_OnAssignedTagsRemove"]

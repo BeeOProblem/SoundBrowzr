@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://dw2gsr4y44akk" path="res://ConfigUi/ConfigWindow.cs" id="1_yvde8"]
 [ext_resource type="PackedScene" uid="uid://cxbuy4uxgmsal" path="res://ConfigUi/SelectableLabel.tscn" id="2_ngj5b"]
 
-[node name="ConfigWindow" type="Window" node_paths=PackedStringArray("OkButton", "CancelButton", "ExistingPathsContainer", "DirBrowseDialog")]
+[node name="ConfigWindow" type="Window" node_paths=PackedStringArray("OkButton", "CancelButton", "ExistingPathsContainer", "DirBrowseDialog", "OpenCommandPath", "OpenAllowMultiple")]
 oversampling_override = 1.0
 title = "Configuration"
 initial_position = 2
@@ -17,6 +17,8 @@ OkButton = NodePath("Ok")
 CancelButton = NodePath("Cancel")
 ExistingPathsContainer = NodePath("PathContainer/ScrollContainer/VBoxContainer")
 DirBrowseDialog = NodePath("FileDialog")
+OpenCommandPath = NodePath("AudioEditorPath")
+OpenAllowMultiple = NodePath("AudioEditorOpenMultiple")
 SelectableLabel = ExtResource("2_ngj5b")
 
 [node name="FileDialog" type="FileDialog" parent="."]
@@ -60,7 +62,7 @@ anchor_bottom = 1.0
 offset_left = 2.0
 offset_top = 64.0
 offset_right = -3.0517578e-05
-offset_bottom = -52.0
+offset_bottom = -150.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -109,12 +111,57 @@ size_flags_horizontal = 8
 size_flags_vertical = 8
 text = "Cancel"
 
+[node name="Label2" type="Label" parent="."]
+anchors_preset = -1
+anchor_top = 0.716
+anchor_right = 0.99600005
+anchor_bottom = 0.748
+offset_top = -6.0
+offset_right = -402.00003
+offset_bottom = 1.0
+text = "Audio Editor"
+
+[node name="AudioEditorPath" type="LineEdit" parent="."]
+anchors_preset = -1
+anchor_left = 0.004
+anchor_top = 0.76400006
+anchor_right = 0.75600004
+anchor_bottom = 0.814
+offset_left = -2.0
+offset_top = -6.0000305
+offset_right = -2.0000305
+
+[node name="AudioEditorOpenMultiple" type="CheckBox" parent="."]
+anchors_preset = -1
+anchor_left = 0.004
+anchor_top = 0.81200004
+anchor_right = 0.99600005
+anchor_bottom = 0.87600005
+offset_left = -2.0
+offset_top = 1.9999695
+offset_right = -120.00003
+offset_bottom = 0.9999695
+text = "Editor Can Open Multiple Files"
+
+[node name="AudioEditorFind" type="Button" parent="."]
+anchors_preset = -1
+anchor_left = 0.772
+anchor_top = 0.75200003
+anchor_right = 0.99600005
+anchor_bottom = 0.814
+offset_left = -2.0
+offset_top = -3.0517578e-05
+offset_right = -2.0000305
+text = "Find..."
+
 [connection signal="close_requested" from="." to="." method="_CancelClicked"]
 [connection signal="visibility_changed" from="." to="." method="_OnOpen"]
 [connection signal="canceled" from="FileDialog" to="." method="_DirBrowseCancel"]
 [connection signal="dir_selected" from="FileDialog" to="." method="_DirBrowseSelect"]
+[connection signal="file_selected" from="FileDialog" to="." method="_DirBrowseSelect"]
 [connection signal="pressed" from="Toolbox/Add" to="." method="_AddPathClicked"]
 [connection signal="pressed" from="Toolbox/Change" to="." method="_ChangePathClicked"]
 [connection signal="pressed" from="Toolbox/Remove" to="." method="_RemovePathClicked"]
 [connection signal="pressed" from="Ok" to="." method="_OkClicked"]
 [connection signal="pressed" from="Cancel" to="." method="_CancelClicked"]
+[connection signal="pressed" from="AudioEditorFind" to="." method="_BrowseCommandClicked"]
