@@ -168,69 +168,75 @@ public partial class MainWindow : Control
                 FileSystemTree.Clear();
                 treeRoot = FileSystemTree.CreateItem();
                 treeRoot.SetText(0, "Sounds");
-                var treeItem = treeRoot;
-                string currentPath = "";
-                foreach (var foundFile in scanResults)
-                {
-                    // move to path containing file in UI tree
-                    // if it doesn't exist, create it
-                    if(foundFile.RelativePath != currentPath)
-                    {
-                        var curSp = currentPath.Split(Path.DirectorySeparatorChar);
-                        var newSp = foundFile.RelativePath.Split(Path.DirectorySeparatorChar);
-                        int firstMiss = 0;
-                        for (; firstMiss < newSp.Length; firstMiss++)
-                        {
-                            if(firstMiss >= curSp.Length || curSp[firstMiss] != newSp[firstMiss])
-                            {
-                                break;
-                            }
-                        }
-
-                        int back = curSp.Length - firstMiss;
-                        while(back > 0)
-                        {
-                            treeItem = treeItem.GetParent();
-                            back--;
-                        }
-
-                        var fwd = newSp.Skip(firstMiss).ToList();
-                        while (fwd.Count > 0)
-                        {
-                            int i = 0;
-                            int c = treeItem.GetChildCount();
-                            for (i = 0; i < c; i++)
-                            {
-                                var checkItem = treeItem.GetChild(i);
-                                if (checkItem.GetText(0) == fwd[0])
-                                {
-                                    treeItem = checkItem;
-                                }
-                            }
-
-                            if(i == c)
-                            {
-                                treeItem = treeItem.CreateChild();
-                                treeItem.SetText(0, fwd[0]);
-                                treeItem.SetMeta("dir", true);
-                            }
-
-                            fwd.RemoveAt(0);
-                        }
-
-                        currentPath = foundFile.RelativePath;
-                    }
-
-                    var fileItem = treeItem.CreateChild();
-                    fileItem.SetText(0, foundFile.Name);
-                    fileItem.SetMeta("file", foundFile.FullName);
-                    fileItem.SetSelectable(0, true);
-                    metadata[foundFile.FullName] = foundFile.Metadata;
-                }
-
+                PopulateFileTree(treeRoot, scanResults);
                 scanInProgress = false;
                 scanResults.Clear();
             }
+        }
+    }
+
+    private void PopulateFileTree(TreeItem treeRoot, List<ScannedFile> scanResults)
+    {
+        var treeItem = treeRoot;
+        string currentPath = "";
+        foreach (var foundFile in scanResults)
+        {
+            // move to path containing file in UI tree
+            // if it doesn't exist, create it
+            if (foundFile.RelativePath != currentPath)
+            {
+                var curPathSplit = currentPath.Split(Path.DirectorySeparatorChar);
+                var newPathSplit = foundFile.RelativePath.Split(Path.DirectorySeparatorChar);
+                int firstMiss = 0;
+                for (; firstMiss < newPathSplit.Length; firstMiss++)
+                {
+                    if (firstMiss >= curPathSplit.Length || curPathSplit[firstMiss] != newPathSplit[firstMiss])
+                    {
+                        break;
+                    }
+                }
+
+                int back = curPathSplit.Length - firstMiss;
+                while (back > 0)
+                {
+                    treeItem = treeItem.GetParent();
+                    back--;
+                }
+
+                var fwd = newPathSplit.Skip(firstMiss).ToList();
+                while (fwd.Count > 0)
+                {
+                    int i = 0;
+                    int c = treeItem.GetChildCount();
+                    for (i = 0; i < c; i++)
+                    {
+                        var checkItem = treeItem.GetChild(i);
+                        if (checkItem.GetText(0) == fwd[0])
+                        {
+                            treeItem = checkItem;
+                        }
+                    }
+
+                    if (i == c)
+                    {
+                        treeItem = treeItem.CreateChild();
+                        treeItem.SetText(0, fwd[0]);
+                        treeItem.SetMeta("dir", true);
+                    }
+
+                    fwd.RemoveAt(0);
+                }
+
+                currentPath = foundFile.RelativePath;
+            }
+
+            // add entry to UI, meta value used to get metadata out of metadata dictionary
+            // and also to load and play the sound file
+            var fileItem = treeItem.CreateChild();
+            fileItem.SetText(0, foundFile.Name);
+            fileItem.SetMeta("file", foundFile.FullName);
+            fileItem.SetSelectable(0, true);
+            metadata[foundFile.FullName] = foundFile.Metadata;
         }
     }
 
