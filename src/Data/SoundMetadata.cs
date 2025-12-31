@@ -35,16 +35,13 @@ namespace SoundBrowzr
             {
                 using (StreamReader sr = new StreamReader(soundFilePath + MetaFileExtension))
                 {
-                    GD.Print("reading ", soundFilePath + MetaFileExtension);
                     string tagsLine = sr.ReadLine();
                     string[] tagsFromFile = tagsLine.Split(',');
                     foreach (string tag in tagsFromFile)
                     {
-                        GD.Print("got tag ", tag);
                         TagDefinition foundTag = tagProvider(tag);
                         if (tag != null)
                         {
-                            GD.Print("added to metadata in memory");
                             tags.Add(foundTag);
                         }
                     }
