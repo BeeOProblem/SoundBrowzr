@@ -13,6 +13,8 @@ public partial class MainWindow : Control
 
     [Export]
     ConfigWindow ConfigWindow;
+    [Export]
+    Control ScanOverlay;
 
     [Export]
     LineEdit TagSearchText;
@@ -171,6 +173,7 @@ public partial class MainWindow : Control
                 PopulateFileTree(treeRoot, scanResults);
                 scanInProgress = false;
                 scanResults.Clear();
+                ScanOverlay.Visible = false;
             }
         }
     }
@@ -553,6 +556,7 @@ public partial class MainWindow : Control
         FileSystemTree.Clear();
         metadata.Clear();
 
+        ScanOverlay.Visible = true;
         scanQueue = new Queue<PathToScan>();
         scanResults = new List<ScannedFile>();
         scanInProgress = true;
