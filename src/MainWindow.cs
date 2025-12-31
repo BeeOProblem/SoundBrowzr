@@ -63,8 +63,11 @@ public partial class MainWindow : Control
     SoundMetadata selectedSoundInfo;
 
     // transient state (drags etc)
-    // TODO: move into script specific for sound playback control
+    // TODO: move into script specific for sound playback control etc
     bool scrubInProgress;
+    bool scanInProgress;
+    Queue<PathToScan> scanQueue;
+    List<ScannedFile> scanResults;
 
     public override void _Ready()
     {
@@ -152,6 +155,81 @@ public partial class MainWindow : Control
             else
             {
                 PlaybackPosition.SetValueNoSignal(v);
+            }
+        }
+
+        if(scanInProgress)
+        {
+            // TODO: timebox scanning instead of scanning one directory at a time
+            var dir = scanQueue.Dequeue();
+            ScanDirectoryForSounds(dir.root, dir.dir, scanResults);
+            if(scanQueue.Count == 0)
+            {
+                FileSystemTree.Clear();
+                treeRoot = FileSystemTree.CreateItem();
+                treeRoot.SetText(0, "Sounds");
+                var treeItem = treeRoot;
+                string currentPath = "";
+                foreach (var foundFile in scanResults)
+                {
+                    // move to path containing file in UI tree
+                    // if it doesn't exist, create it
+                    if(foundFile.RelativePath != currentPath)
+                    {
+                        var curSp = currentPath.Split(Path.DirectorySeparatorChar);
+                        var newSp = foundFile.RelativePath.Split(Path.DirectorySeparatorChar);
+                        int firstMiss = 0;
+                        for (; firstMiss < newSp.Length; firstMiss++)
+                        {
+                            if(firstMiss >= curSp.Length || curSp[firstMiss] != newSp[firstMiss])
+                            {
+                                break;
+                            }
+                        }
+
+                        int back = curSp.Length - firstMiss;
+                        while(back > 0)
+                        {
+                            treeItem = treeItem.GetParent();
+                            back--;
+                        }
+
+                        var fwd = newSp.Skip(firstMiss).ToList();
+                        while (fwd.Count > 0)
+                        {
+                            int i = 0;
+                            int c = treeItem.GetChildCount();
+                            for (i = 0; i < c; i++)
+                            {
+                                var checkItem = treeItem.GetChild(i);
+                                if (checkItem.GetText(0) == fwd[0])
+                                {
+                                    treeItem = checkItem;
+                                }
+                            }
+
+                            if(i == c)
+                            {
+                                treeItem = treeItem.CreateChild();
+                                treeItem.SetText(0, fwd[0]);
+                                treeItem.SetMeta("dir", true);
+                            }
+
+                            fwd.RemoveAt(0);
+                        }
+
+                        currentPath = foundFile.RelativePath;
+                    }
+
+                    var fileItem = treeItem.CreateChild();
+                    fileItem.SetText(0, foundFile.Name);
+                    fileItem.SetMeta("file", foundFile.FullName);
+                    fileItem.SetSelectable(0, true);
+                    metadata[foundFile.FullName] = foundFile.Metadata;
+                }
+
+                scanInProgress = false;
+                scanResults.Clear();
             }
         }
     }
@@ -419,7 +497,6 @@ public partial class MainWindow : Control
         // TODO: on failure other than non-existent database show error dialog
         ConfigFile tagDefinitionFile = new ConfigFile();
         string actualFilePath = ProjectSettings.GlobalizePath(TagDefFilePath);
-        GD.Print(actualFilePath);
         var result = tagDefinitionFile.Load(actualFilePath);
         if (result == Error.FileNotFound)
         {
@@ -441,9 +518,14 @@ public partial class MainWindow : Control
 
             tag.Name = cleanTagName;
             tag.Color = new Color(colorStr);
-
-            if (allTags.Contains(tag)) GD.Print("Warning - tag definition file has duplicated tag");
-            AddNewTag(tag);
+            if (allTags.Contains(tag))
+            {
+                GD.Print("Warning - tag definition file has duplicated tag, skipped");
+            }
+            else
+            {
+                AddNewTag(tag);
+            }
         }
     }
 
@@ -464,45 +546,46 @@ public partial class MainWindow : Control
     {
         FileSystemTree.Clear();
         metadata.Clear();
-        treeRoot = FileSystemTree.CreateItem();
-        treeRoot.SetText(0, "Sounds");
 
-        // TODO: this entire process should be in _Process or a thread instead of stalling the program
+        scanQueue = new Queue<PathToScan>();
+        scanResults = new List<ScannedFile>();
+        scanInProgress = true;
         foreach (var dirPath in searchPaths)
         {
             DirectoryInfo walk = new DirectoryInfo(dirPath);
-            AddSounds(walk, treeRoot);
+            AddToScanQueue(walk.FullName, walk, scanQueue);
         }
     }
 
-    private void AddSounds(DirectoryInfo dir, TreeItem treeItem)
+    private void AddToScanQueue(string scanRoot, DirectoryInfo dir, Queue<PathToScan> scanQueue)
     {
-        // TODO: this processing should happen in _Process and be broken up
-        //       so that the program doesn't freeze on load
         foreach (var d in dir.EnumerateDirectories())
         {
-            // TODO: if no files are to be added in the branch do not add directory
-            var item = treeItem.CreateChild();
-            item.SetText(0, d.Name);
-            item.SetMeta("dir", true);
-            AddSounds(d, item);
+            PathToScan sc = new PathToScan();
+            sc.dir = d;
+            sc.root = scanRoot;
+            scanQueue.Enqueue(sc);
+            AddToScanQueue(scanRoot, d, scanQueue);
+        }
+    }
 
-            foreach (FileInfo file in d.EnumerateFiles())
+    private void ScanDirectoryForSounds(string scanRoot, DirectoryInfo dir, List<ScannedFile> scanResults)
+    {
+        foreach (FileInfo file in dir.EnumerateFiles())
+        {
+            // TODO: use 3rd party sound library so more formats are supported
+            string ext = StringExtensions.GetExtension(file.Name);
+            if (ext == "wav" || ext == "mp3" || ext == "ogg")
             {
-                // TODO: use 3rd party sound library so more formats are supported
-                string ext = StringExtensions.GetExtension(file.Name);
-                if (ext == "wav" || ext == "mp3" || ext == "ogg")
-                {
-                    var fileItem = item.CreateChild();
-                    fileItem.SetText(0, file.Name);
-                    fileItem.SetMeta("file", file.FullName);
-                
-                    var fileMetadata = new SoundMetadata(file.FullName);
-                    fileMetadata.TryLoadMetaFile(GetOrCreateTag);
-                    metadata[file.FullName] = fileMetadata;
+                ScannedFile newFile = new ScannedFile();
+                newFile.dir = dir;
+                newFile.Name = file.Name;
+                newFile.FullName = file.FullName;
+                newFile.RelativePath = dir.FullName.Replace(scanRoot, "");
+                newFile.Metadata = new SoundMetadata(file.FullName);
+                newFile.Metadata.TryLoadMetaFile(GetOrCreateTag);
 
-                    fileItem.SetSelectable(0, true);
-                }
+                scanResults.Add(newFile);
             }
         }
     }
@@ -530,7 +613,7 @@ public partial class MainWindow : Control
 
     private void AddNewTag(TagDefinition newTag)
     {
-        GD.Print("'", newTag.Name, "'");
+        GD.Print("Create tag '", newTag.Name, "'");
         allTags.Add(newTag);
         AvailableTags.AddTag(newTag);
 
