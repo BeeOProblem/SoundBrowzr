@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://ddafk8kdlwqum"]
+[gd_scene load_steps=15 format=3 uid="uid://ddafk8kdlwqum"]
 
 [ext_resource type="Script" uid="uid://1jol0y84d4cf" path="res://MainWindow.cs" id="1_p4mt5"]
 [ext_resource type="PackedScene" uid="uid://cnqmreoccdwhp" path="res://TagUi/TagUi.tscn" id="2_7qsqj"]
@@ -6,41 +6,43 @@
 [ext_resource type="PackedScene" uid="uid://drfvlf0053jsf" path="res://ConfigUi/ConfigWindow.tscn" id="3_e7h7s"]
 [ext_resource type="Script" uid="uid://b8iamykvkth34" path="res://TagUi/BasicTagList.cs" id="4_l4su8"]
 [ext_resource type="PackedScene" uid="uid://cbx4rtuy0inal" path="res://TagUi/BasicTagList.tscn" id="4_mgnd2"]
+[ext_resource type="Texture2D" uid="uid://u4gabqas28r7" path="res://ThrobberBack.png" id="7_or8l5"]
+[ext_resource type="Texture2D" uid="uid://bm6pxopccaorc" path="res://ThrobberWaveform.png" id="8_onhml"]
+[ext_resource type="Texture2D" uid="uid://duvqm47sretf5" path="res://ThrobberFront.png" id="9_nekg8"]
 
 [sub_resource type="ImageTexture" id="ImageTexture_e7h7s"]
 
 [sub_resource type="ImageTexture" id="ImageTexture_p4i4y"]
-
-[sub_resource type="Animation" id="Animation_e7h7s"]
-resource_name = "Throb"
-length = 2.0
-loop_mode = 1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("VBoxContainer/ThrobImage:modulate")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 1, 2),
-"transitions": PackedFloat32Array(1, 1, 1),
-"update": 0,
-"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0.5019608), Color(1, 1, 1, 1)]
-}
 
 [sub_resource type="Animation" id="Animation_p4i4y"]
 length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("VBoxContainer/ThrobImage:modulate")
+tracks/0/path = NodePath("VBoxContainer/ThrobImage/Waveform:position")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Color(1, 1, 1, 1)]
+"values": [Vector2(180, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_e7h7s"]
+resource_name = "Throb"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("VBoxContainer/ThrobImage/Waveform:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(180, 0), Vector2(436, 0)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_4y1g4"]
@@ -48,9 +50,6 @@ _data = {
 &"RESET": SubResource("Animation_p4i4y"),
 &"Throb": SubResource("Animation_e7h7s")
 }
-
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_or8l5"]
-size = Vector2(64, 64)
 
 [node name="MainWindow" type="Control" node_paths=PackedStringArray("ConfigWindow", "ScanOverlay", "TagSearchText", "AvailableTags", "TagEditor", "FilterIncludeTags", "FilterExcludeTags", "FileSystemTree", "FilePathLabel", "AudioStreamPlayer", "PlaybackPosition", "VolumeSlider", "OpenButton", "AssignedTags")]
 layout_mode = 3
@@ -352,6 +351,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="ScanningOverlay" type="ColorRect" parent="."]
+visible = false
 modulate = Color(1, 1, 1, 0.7058824)
 layout_mode = 1
 anchors_preset = 15
@@ -383,14 +383,35 @@ size_flags_vertical = 3
 mouse_filter = 2
 
 [node name="ThrobImage" type="TextureRect" parent="ScanningOverlay/VBoxContainer"]
-custom_minimum_size = Vector2(64, 64)
+clip_children = 2
+custom_minimum_size = Vector2(64, 256)
 layout_mode = 2
+texture = ExtResource("7_or8l5")
+stretch_mode = 3
+
+[node name="Waveform" type="TextureRect" parent="ScanningOverlay/VBoxContainer/ThrobImage"]
+texture_repeat = 2
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 0
+offset_left = 180.0
+offset_right = 691.9945
+offset_bottom = 256.0
 size_flags_stretch_ratio = 0.0
-texture = SubResource("PlaceholderTexture2D_or8l5")
+texture = ExtResource("8_onhml")
+stretch_mode = 1
+
+[node name="Foreground" type="TextureRect" parent="ScanningOverlay/VBoxContainer/ThrobImage"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 0
+offset_right = 1152.0
+offset_bottom = 256.0
+size_flags_stretch_ratio = 0.0
+texture = ExtResource("9_nekg8")
 stretch_mode = 3
 
 [node name="Label" type="Label" parent="ScanningOverlay/VBoxContainer"]
 layout_mode = 2
+size_flags_vertical = 1
 theme_override_font_sizes/font_size = 24
 text = "Scanning Filesystem"
 horizontal_alignment = 1

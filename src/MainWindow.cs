@@ -12,6 +12,7 @@ public partial class MainWindow : Control
     const string ConfigFilePath = "user://SoundBrowzr.conf";
 
     const long ScanProcessTimeboxMs = 100;
+    const float ScanMinTime = 1.0f;
 
     [Export]
     ConfigWindow ConfigWindow;
@@ -70,6 +71,7 @@ public partial class MainWindow : Control
     // TODO: move into script specific for sound playback control etc
     bool scrubInProgress;
     bool scanInProgress;
+    float scanTime;
     Queue<PathToScan> scanQueue;
     List<ScannedFile> scanResults;
 
@@ -168,21 +170,30 @@ public partial class MainWindow : Control
             Stopwatch timer = new Stopwatch();
             do
             {
-                timer.Start();
-                var dir = scanQueue.Dequeue();
-                ScanDirectoryForSounds(dir.root, dir.dir, scanResults);
-                if (scanQueue.Count == 0)
+                if (scanQueue.Count > 0)
                 {
-                    FileSystemTree.Clear();
-                    treeRoot = FileSystemTree.CreateItem();
-                    treeRoot.SetText(0, "Sounds");
-                    PopulateFileTree(treeRoot, scanResults);
-                    scanInProgress = false;
-                    scanResults.Clear();
-                    ScanOverlay.Visible = false;
+                    timer.Start();
+                    var dir = scanQueue.Dequeue();
+                    ScanDirectoryForSounds(dir.root, dir.dir, scanResults);
+                    timer.Stop();
                 }
-                timer.Stop();
+                else
+                {
+                    break;
+                }
             } while (timer.ElapsedMilliseconds < ScanProcessTimeboxMs);
+
+            scanTime += (float)delta;
+            if (scanQueue.Count == 0 && scanTime >= ScanMinTime)
+            {
+                FileSystemTree.Clear();
+                treeRoot = FileSystemTree.CreateItem();
+                treeRoot.SetText(0, "Sounds");
+                PopulateFileTree(treeRoot, scanResults);
+                scanInProgress = false;
+                scanResults.Clear();
+                ScanOverlay.Visible = false;
+            }
         }
     }
 
@@ -567,6 +578,7 @@ public partial class MainWindow : Control
         ScanOverlay.Visible = true;
         scanQueue = new Queue<PathToScan>();
         scanResults = new List<ScannedFile>();
+        scanTime = 0;
         scanInProgress = true;
         foreach (var dirPath in searchPaths)
         {
