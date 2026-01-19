@@ -2,14 +2,16 @@ using Godot;
 using SoundBrowzr;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.Marshalling;
 
 public partial class MainWindow : Control
 {
     const string TagDefFilePath = "user://SoundBrowzrTags.dat";
     const string ConfigFilePath = "user://SoundBrowzr.conf";
+
+    const long ScanProcessTimeboxMs = 100;
 
     [Export]
     ConfigWindow ConfigWindow;
@@ -162,19 +164,25 @@ public partial class MainWindow : Control
 
         if(scanInProgress)
         {
-            // TODO: timebox scanning instead of scanning one directory at a time
-            var dir = scanQueue.Dequeue();
-            ScanDirectoryForSounds(dir.root, dir.dir, scanResults);
-            if(scanQueue.Count == 0)
+            // scan directories continually until timebox has ended
+            Stopwatch timer = new Stopwatch();
+            do
             {
-                FileSystemTree.Clear();
-                treeRoot = FileSystemTree.CreateItem();
-                treeRoot.SetText(0, "Sounds");
-                PopulateFileTree(treeRoot, scanResults);
-                scanInProgress = false;
-                scanResults.Clear();
-                ScanOverlay.Visible = false;
-            }
+                timer.Start();
+                var dir = scanQueue.Dequeue();
+                ScanDirectoryForSounds(dir.root, dir.dir, scanResults);
+                if (scanQueue.Count == 0)
+                {
+                    FileSystemTree.Clear();
+                    treeRoot = FileSystemTree.CreateItem();
+                    treeRoot.SetText(0, "Sounds");
+                    PopulateFileTree(treeRoot, scanResults);
+                    scanInProgress = false;
+                    scanResults.Clear();
+                    ScanOverlay.Visible = false;
+                }
+                timer.Stop();
+            } while (timer.ElapsedMilliseconds < ScanProcessTimeboxMs);
         }
     }
 
