@@ -15,8 +15,13 @@ run/main_scene="uid://ddafk8kdlwqum"
 config/features=PackedStringArray("4.5", "C#", "Forward Plus")
 boot_splash/show_image=false
 boot_splash/fullsize=false
-config/icon="res://icon.svg"
+config/icon="uid://ckxryyhjyv00e"
 
 [dotnet]
 
 project/assembly_name="SoundBrowzr"
+
+[physics]
+
+2d/physics_engine="Dummy"
+3d/physics_engine="Dummy"
