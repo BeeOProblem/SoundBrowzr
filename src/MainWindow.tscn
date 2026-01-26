@@ -52,6 +52,7 @@ _data = {
 }
 
 [node name="MainWindow" type="Control" node_paths=PackedStringArray("ConfigWindow", "ScanOverlay", "TagSearchText", "AvailableTags", "TagEditor", "FilterIncludeTags", "FilterExcludeTags", "FileSystemTree", "FilePathLabel", "AudioStreamPlayer", "PlaybackPosition", "VolumeSlider", "OpenButton", "AssignedTags")]
+custom_minimum_size = Vector2(0, 300)
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0

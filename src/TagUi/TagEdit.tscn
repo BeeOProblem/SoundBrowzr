@@ -1,8 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://dslev267kwqbq"]
+[gd_scene load_steps=3 format=3 uid="uid://dslev267kwqbq"]
 
 [ext_resource type="Script" uid="uid://dhxi4tkfvk0ip" path="res://TagUi/TagEditUi.cs" id="1_q4uoq"]
+[ext_resource type="PackedScene" uid="uid://duxekhl7opalu" path="res://TagUi/ColorPicker.tscn" id="2_r2j81"]
 
-[node name="TagEdit" type="Window" node_paths=PackedStringArray("TagName", "TagColor")]
+[node name="TagEdit" type="Window" node_paths=PackedStringArray("TagName", "CurrentColor", "ColorPickerButton", "ColorPickerPopup", "ColorPicker")]
 oversampling_override = 1.0
 title = "Edit Tag"
 initial_position = 2
@@ -13,7 +14,13 @@ unresizable = true
 popup_window = true
 script = ExtResource("1_q4uoq")
 TagName = NodePath("TagName")
-TagColor = NodePath("ColorPickerButton")
+CurrentColor = NodePath("ColorPickerButton/Color")
+ColorPickerButton = NodePath("ColorPickerButton")
+ColorPickerPopup = NodePath("ColorPicker")
+ColorPicker = NodePath("ColorPicker/ColorPicker")
+
+[node name="ColorPicker" parent="." instance=ExtResource("2_r2j81")]
+position = Vector2i(570, 60)
 
 [node name="TagNameLabel" type="Label" parent="."]
 offset_top = 8.0
@@ -33,12 +40,24 @@ offset_right = 42.0
 offset_bottom = 79.0
 text = "Color"
 
-[node name="ColorPickerButton" type="ColorPickerButton" parent="."]
+[node name="ColorPickerButton" type="Button" parent="."]
 offset_left = 80.0
 offset_top = 48.0
 offset_right = 192.0
 offset_bottom = 88.0
-color = Color(1, 1, 1, 1)
+
+[node name="Color" type="ColorRect" parent="ColorPickerButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 3.0
+offset_top = 3.0
+offset_right = -3.0
+offset_bottom = -3.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
 
 [node name="Ok" type="Button" parent="."]
 offset_left = 288.0
@@ -56,6 +75,8 @@ text = "Cancel"
 
 [connection signal="close_requested" from="." to="." method="_CancelClicked"]
 [connection signal="text_changed" from="TagName" to="." method="_TagNameChanged"]
-[connection signal="color_changed" from="ColorPickerButton" to="." method="_TagColorChanged"]
+[connection signal="pressed" from="ColorPickerButton" to="." method="_ColorButtonClicked"]
 [connection signal="pressed" from="Ok" to="." method="_OkClicked"]
 [connection signal="pressed" from="Cancel" to="." method="_CancelClicked"]
+
+[editable path="ColorPicker"]
