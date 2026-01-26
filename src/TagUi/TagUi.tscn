@@ -1,20 +1,21 @@
-[gd_scene load_steps=6 format=3 uid="uid://cnqmreoccdwhp"]
+[gd_scene load_steps=7 format=3 uid="uid://cnqmreoccdwhp"]
 
 [ext_resource type="Script" uid="uid://cu11smy7acvgd" path="res://TagUi/TagUi.cs" id="1_bwdjv"]
+[ext_resource type="Texture2D" uid="uid://duoukshe7scjf" path="res://TagUi/TagUiBackground.png" id="2_4h7ro"]
 
 [sub_resource type="Animation" id="Animation_bwdjv"]
 resource_name = "Default"
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath(".:modulate")
+tracks/0/path = NodePath("Background:modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Color(1, 1, 1, 0.627451)]
+"values": [Color(0.75, 0.75, 0.75, 1)]
 }
 
 [sub_resource type="Animation" id="Animation_n7mmq"]
@@ -22,14 +23,14 @@ length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath(".:modulate")
+tracks/0/path = NodePath("Background:modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Color(1, 1, 1, 0.627451)]
+"values": [Color(0.75, 0.75, 0.75, 1)]
 }
 
 [sub_resource type="Animation" id="Animation_lni2q"]
@@ -37,7 +38,7 @@ resource_name = "Selected"
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath(".:modulate")
+tracks/0/path = NodePath("Background:modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -55,15 +56,15 @@ _data = {
 }
 
 [node name="Tag" type="MarginContainer" node_paths=PackedStringArray("TagName", "Background", "AnimationPlayer")]
-modulate = Color(1, 1, 1, 0.627451)
-offset_right = 78.0
-offset_bottom = 32.0
-theme_override_constants/margin_left = 4
+anchors_preset = -1
+offset_right = 106.0
+offset_bottom = 51.0
+theme_override_constants/margin_left = 1
 theme_override_constants/margin_top = 2
-theme_override_constants/margin_right = 4
+theme_override_constants/margin_right = 1
 theme_override_constants/margin_bottom = 2
 script = ExtResource("1_bwdjv")
-TagName = NodePath("Label")
+TagName = NodePath("MarginContainer/Label")
 Background = NodePath("Background")
 AnimationPlayer = NodePath("AnimationPlayer")
 metadata/_edit_use_anchors_ = true
@@ -74,12 +75,25 @@ libraries = {
 }
 autoplay = "Default"
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="NinePatchRect" parent="."]
+modulate = Color(0.75, 0.75, 0.75, 1)
 layout_mode = 2
 size_flags_horizontal = 3
-mouse_filter = 2
+texture = ExtResource("2_4h7ro")
+region_rect = Rect2(0, 0, 80, 80)
+patch_margin_left = 16
+patch_margin_top = 18
+patch_margin_right = 16
+patch_margin_bottom = 18
+axis_stretch_horizontal = 2
+axis_stretch_vertical = 2
 
-[node name="Label" type="Label" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_right = 10
+
+[node name="Label" type="Label" parent="MarginContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_constants/outline_size = 2
