@@ -48,6 +48,12 @@ public class TagDefinition
         Color = new Color(0xFFFFFFFF);
     }
 
+    public TagDefinition(TagDefinition cloneFrom)
+    {
+        Name = cloneFrom.Name;
+        Color = cloneFrom.Color;
+    }
+
     public override bool Equals(object obj)
     {
         if (obj == this) return true;

@@ -1,4 +1,5 @@
 using Godot;
+using Microsoft.VisualBasic;
 using System;
 
 public partial class TagEditUi : Window
@@ -6,7 +7,13 @@ public partial class TagEditUi : Window
     [Export]
     LineEdit TagName;
     [Export]
-    ColorPickerButton TagColor;
+    ColorRect CurrentColor;
+    [Export]
+    Button ColorPickerButton;
+    [Export]
+    PopupPanel ColorPickerPopup;
+    [Export]
+    ColorPicker ColorPicker;
 
     public event EventHandler OnCancel;
     public event EventHandler OnOk;
@@ -19,19 +26,21 @@ public partial class TagEditUi : Window
 
     public void AssignTag(TagDefinition tag)
     {
-        ModifiedTag = tag;
+        ModifiedTag = new TagDefinition(tag);
 
         TagName.Text = tag.Name;
-        TagColor.Color = tag.Color;
+        CurrentColor.Color = tag.Color;
+        ColorPicker.Color = tag.Color;
     }
 
     public override void _Ready()
     {
         TagName.Text = ModifiedTag.Name;
-        TagColor.Color = ModifiedTag.Color;
+        CurrentColor.Color = ModifiedTag.Color;
 
         TagName.TextChanged += _TagNameChanged;
-        TagColor.ColorChanged += _TagColorChanged;
+        ColorPicker.ColorChanged += _TagColorChanged;
+        ColorPickerPopup.VisibilityChanged += _ColorPickerVisibilityChanged;
     }
 
     private void _TagNameChanged(string newText)
@@ -42,6 +51,17 @@ public partial class TagEditUi : Window
     private void _TagColorChanged(Color color)
     {
         ModifiedTag.Color = color;
+        CurrentColor.Color = ModifiedTag.Color;
+    }
+
+    private void _ColorButtonClicked()
+    {
+        ColorPickerPopup.Show();
+    }
+
+    private void _ColorPickerVisibilityChanged()
+    {
+        ColorPickerButton.Disabled = ColorPickerPopup.Visible;
     }
 
     private void _OkClicked()

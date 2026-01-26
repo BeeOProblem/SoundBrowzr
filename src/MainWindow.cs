@@ -371,6 +371,10 @@ public partial class MainWindow : Control
     {
         TagEditor.OnOk -= _EditTagOnOk;
         TagEditor.OnCancel -= _EditTagOnCancel;
+
+        TagDefinition originalTag = AvailableTags.SelectedTags.First();
+        originalTag.Name = TagEditor.ModifiedTag.Name;
+        originalTag.Color = TagEditor.ModifiedTag.Color;
         SaveTags();
     }
 

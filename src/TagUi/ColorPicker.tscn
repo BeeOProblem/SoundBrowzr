@@ -1,0 +1,20 @@
+[gd_scene load_steps=2 format=3 uid="uid://duxekhl7opalu"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7iwy5"]
+bg_color = Color(0.2, 0.2, 0.2, 0.78431374)
+
+[node name="ColorPicker" type="PopupPanel"]
+oversampling_override = 1.0
+size = Vector2i(306, 447)
+visible = true
+theme_override_styles/panel = SubResource("StyleBoxFlat_7iwy5")
+
+[node name="ColorPicker" type="ColorPicker" parent="."]
+offset_right = 306.0
+offset_bottom = 447.0
+edit_alpha = false
+edit_intensity = false
+picker_shape = 2
+sampler_visible = false
+color_modes_visible = false
+hex_visible = false
