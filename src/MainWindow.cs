@@ -604,15 +604,17 @@ public partial class MainWindow : Control
 
     private void _OnOpen()
     {
-        System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
-        startInfo.FileName = openCommand;
-        startInfo.RedirectStandardError = false;
-        startInfo.RedirectStandardError = false;
-        startInfo.RedirectStandardOutput = false;
-        startInfo.UseShellExecute = false;
-        startInfo.ArgumentList.Add(selectedPath);
-        
-        System.Diagnostics.Process.Start(startInfo);
+        if (checkedSounds.Count == 0)
+        {
+            OpenSoundEditorFor(selectedPath);
+        }
+        else
+        {
+            foreach(var soundFile in checkedSounds)
+            {
+                OpenSoundEditorFor(soundFile);
+            }
+        }
     }
 
     private void _OnPlaybackPosDragStart()
@@ -844,5 +846,18 @@ public partial class MainWindow : Control
         AudioStreamPlayer.Stream = stream;
         PlaybackPosition.MaxValue = stream.GetLength();
         PlaybackPosition.SetValueNoSignal(0);
+    }
+
+    private void OpenSoundEditorFor(string soundFilePath)
+    {
+        System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
+        startInfo.FileName = openCommand;
+        startInfo.RedirectStandardError = false;
+        startInfo.RedirectStandardError = false;
+        startInfo.RedirectStandardOutput = false;
+        startInfo.UseShellExecute = false;
+        startInfo.ArgumentList.Add(soundFilePath);
+
+        System.Diagnostics.Process.Start(startInfo);
     }
 }

@@ -321,7 +321,6 @@ layout_mode = 2
 [node name="Open" type="Button" parent="HSplitContainer/SoundInfo/MultipleSoundToolbar/Toolbar"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
-disabled = true
 text = "Open All"
 
 [node name="Tag" type="Button" parent="HSplitContainer/SoundInfo/MultipleSoundToolbar/Toolbar"]
@@ -471,6 +470,7 @@ mouse_filter = 2
 [connection signal="pressed" from="HSplitContainer/SoundInfo/SingleSoundToolbar/Toolbar/Play" to="." method="_OnPlay"]
 [connection signal="pressed" from="HSplitContainer/SoundInfo/SingleSoundToolbar/Toolbar/Stop" to="." method="_OnStop"]
 [connection signal="pressed" from="HSplitContainer/SoundInfo/SingleSoundToolbar/Toolbar/Open" to="." method="_OnOpen"]
+[connection signal="pressed" from="HSplitContainer/SoundInfo/MultipleSoundToolbar/Toolbar/Open" to="." method="_OnOpen"]
 [connection signal="pressed" from="HSplitContainer/SoundInfo/MultipleSoundToolbar/Toolbar/Tag" to="." method="_OnAssignedTagsMassAdd"]
 [connection signal="pressed" from="HSplitContainer/SoundInfo/MultipleSoundToolbar/Toolbar/Untag" to="." method="_OnAssignedTagsMassRemove"]
 [connection signal="pressed" from="HSplitContainer/SoundInfo/TagEditor/HBoxContainer/AssignedTags/VBoxContainer/Toolbar/AddSoundTag" to="." method="_OnAssignedTagsAdd"]
