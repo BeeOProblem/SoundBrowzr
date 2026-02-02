@@ -39,6 +39,12 @@ namespace SoundBrowzr
                     string[] tagsFromFile = tagsLine.Split(',');
                     foreach (string tag in tagsFromFile)
                     {
+                        if (tag.Trim().Length == 0)
+                        {
+                            GD.Print("Found blank or whitespace tag in meta file ", soundFilePath + MetaFileExtension);
+                            continue;
+                        }
+
                         TagDefinition foundTag = tagProvider(tag);
                         if (tag != null)
                         {
@@ -68,6 +74,18 @@ namespace SoundBrowzr
             {
                 tags.Add(tag);
             }
+        }
+
+        public void AddTag(TagDefinition tag)
+        {
+            if (tags.Contains(tag)) return;
+            tags.Add(tag);
+        }
+
+        public void RemoveTag(TagDefinition tag)
+        {
+            if (!tags.Contains(tag)) return;
+            tags.Remove(tag);
         }
     }
 }

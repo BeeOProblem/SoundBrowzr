@@ -21,6 +21,7 @@ ColorPicker = NodePath("ColorPicker/ColorPicker")
 
 [node name="ColorPicker" parent="." instance=ExtResource("2_r2j81")]
 position = Vector2i(570, 60)
+visible = false
 
 [node name="TagNameLabel" type="Label" parent="."]
 offset_top = 8.0
