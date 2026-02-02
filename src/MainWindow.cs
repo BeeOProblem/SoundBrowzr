@@ -42,10 +42,24 @@ public partial class MainWindow : Control
     Slider PlaybackPosition;
     [Export]
     Slider VolumeSlider;
-    [Export]
-    Button OpenButton;
+
+    [ExportCategory("Assigned Tags")]
     [Export]
     BasicTagList AssignedTags;
+
+    [ExportCategory("Single Sound Toolbar")]
+    [Export]
+    Control SingleSoundToolbar;
+    [Export]
+    Control SingleSoundTagToolbar;
+    [Export]
+    Button OpenButton;
+
+    [ExportCategory("Multi Sound Toolbar")]
+    [Export]
+    Control MultiSoundToolbar;
+    [Export]
+    Label SelectionCountLabel;
 
     public event EventHandler<TagEventArgs> TagAdded;
     public event EventHandler<TagEventArgs> TagDeleted;
@@ -66,6 +80,7 @@ public partial class MainWindow : Control
     // current selection state
     string selectedPath;
     SoundMetadata selectedSoundInfo;
+    List<string> checkedSounds;
 
     // transient state (drags etc)
     // TODO: move into script specific for sound playback control etc
@@ -187,6 +202,7 @@ public partial class MainWindow : Control
             if (scanQueue.Count == 0 && scanTime >= ScanMinTime)
             {
                 FileSystemTree.Clear();
+                FileSystemTree.Columns = 1;
                 treeRoot = FileSystemTree.CreateItem();
                 treeRoot.SetText(0, "Sounds");
                 PopulateFileTree(treeRoot, scanResults);
@@ -199,6 +215,7 @@ public partial class MainWindow : Control
 
     private void PopulateFileTree(TreeItem treeRoot, List<ScannedFile> scanResults)
     {
+        checkedSounds = new List<string>();
         var treeItem = treeRoot;
         string currentPath = "";
         foreach (var foundFile in scanResults)
@@ -257,7 +274,9 @@ public partial class MainWindow : Control
             var fileItem = treeItem.CreateChild();
             fileItem.SetText(0, foundFile.Name);
             fileItem.SetMeta("file", foundFile.FullName);
+            fileItem.SetMeta("selected", false);
             fileItem.SetSelectable(0, true);
+            fileItem.AddButton(0, GetThemeIcon("unchecked", "CheckBox"));
             metadata[foundFile.FullName] = foundFile.Metadata;
         }
     }
@@ -318,6 +337,36 @@ public partial class MainWindow : Control
             AssignedTags.AssignTags(selectedSoundInfo.Tags);
             LoadSound(soundFilePath);
             _OnPlay();
+        }
+    }
+
+    private void _OnTreeItemCheckPressed(TreeItem fileItem, int column, int id, int mouseButton)
+    {
+        if (fileItem.GetMeta("selected").AsBool() == false)
+        {
+            fileItem.SetButton(column, id, GetThemeIcon("checked", "CheckBox"));
+            fileItem.SetMeta("selected", true);
+            checkedSounds.Add(fileItem.GetMeta("file").AsString());
+        }
+        else
+        {
+            fileItem.SetButton(column, id, GetThemeIcon("unchecked", "CheckBox"));
+            fileItem.SetMeta("selected", false);
+            checkedSounds.Remove(fileItem.GetMeta("file").AsString());
+        }
+
+        SelectionCountLabel.Text = string.Format("{0} Sounds Selected", checkedSounds.Count);
+        if (checkedSounds.Count > 0)
+        {
+            SingleSoundTagToolbar.Visible = false;
+            SingleSoundToolbar.Visible = false;
+            MultiSoundToolbar.Visible = true;
+        }
+        else
+        {
+            SingleSoundTagToolbar.Visible = true;
+            SingleSoundToolbar.Visible = true;
+            MultiSoundToolbar.Visible = false;
         }
     }
 
@@ -448,6 +497,26 @@ public partial class MainWindow : Control
         }
     }
 
+    private void _OnAssignedTagsMassAdd()
+    {
+        // TODO: AssignedTags should have union of tags on all sounds (do on check)
+        foreach (var tag in AvailableTags.SelectedTags)
+        {
+            AssignedTags.AddTag(tag);
+        }
+
+        for (int i = 0; i < checkedSounds.Count; i++)
+        {
+            var soundInfo = metadata[checkedSounds[i]];
+            foreach (var tag in AvailableTags.SelectedTags)
+            {
+                soundInfo.AddTag(tag);
+            }
+
+            selectedSoundInfo.SaveMetaFile();
+        }
+    }
+
     private void _OnAssignedTagsRemove()
     {
         if (selectedSoundInfo != null)
@@ -459,6 +528,23 @@ public partial class MainWindow : Control
 
             selectedSoundInfo.SetTags(AssignedTags.Tags);
             selectedSoundInfo.SaveMetaFile();
+        }
+    }
+
+    private void _OnAssignedTagsMassRemove()
+    {
+        for (int i = 0; i < checkedSounds.Count; i++)
+        {
+            var soundInfo = metadata[checkedSounds[i]];
+            foreach (var tag in AssignedTags.SelectedTags)
+            {
+                soundInfo.RemoveTag(tag);
+            }
+        }
+
+        foreach (var tag in AssignedTags.SelectedTags)
+        {
+            AssignedTags.RemoveTag(tag);
         }
     }
 

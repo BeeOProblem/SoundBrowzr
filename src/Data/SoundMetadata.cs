@@ -69,5 +69,17 @@ namespace SoundBrowzr
                 tags.Add(tag);
             }
         }
+
+        public void AddTag(TagDefinition tag)
+        {
+            if (tags.Contains(tag)) return;
+            tags.Add(tag);
+        }
+
+        public void RemoveTag(TagDefinition tag)
+        {
+            if (!tags.Contains(tag)) return;
+            tags.Remove(tag);
+        }
     }
 }
