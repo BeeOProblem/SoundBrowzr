@@ -361,12 +361,51 @@ public partial class MainWindow : Control
             SingleSoundTagToolbar.Visible = false;
             SingleSoundToolbar.Visible = false;
             MultiSoundToolbar.Visible = true;
+
+            // first pass, collect all tags
+            List<TagDefinition> union = new List<TagDefinition>();
+            for (int i = 0; i < checkedSounds.Count; i++)
+            {
+                var soundInfo = metadata[checkedSounds[i]];
+                foreach (var tag in soundInfo.Tags)
+                {
+                    if (!union.Contains(tag))
+                    {
+                        union.Add(tag);
+                    }
+                }
+            }
+
+            // second pass, remove any that aren't in all
+            for (int i = 0; i < checkedSounds.Count; i++)
+            {
+                var soundInfo = metadata[checkedSounds[i]];
+                for (int j = 0; j < union.Count; j++)
+                {
+                    if(!soundInfo.Tags.Contains(union[j])) 
+                    {
+                        union.Remove(union[j]);
+                        j--;
+                    }
+                }
+            }
+
+            AssignedTags.AssignTags(union);
         }
         else
         {
             SingleSoundTagToolbar.Visible = true;
             SingleSoundToolbar.Visible = true;
             MultiSoundToolbar.Visible = false;
+
+            if (selectedSoundInfo != null)
+            {
+                AssignedTags.AssignTags(selectedSoundInfo.Tags);
+            }
+            else
+            {
+                AssignedTags.AssignTags([]);
+            }
         }
     }
 
@@ -499,7 +538,6 @@ public partial class MainWindow : Control
 
     private void _OnAssignedTagsMassAdd()
     {
-        // TODO: AssignedTags should have union of tags on all sounds (do on check)
         foreach (var tag in AvailableTags.SelectedTags)
         {
             AssignedTags.AddTag(tag);
@@ -507,13 +545,15 @@ public partial class MainWindow : Control
 
         for (int i = 0; i < checkedSounds.Count; i++)
         {
+            // use AddTag instead of SetTags to preserve tags that are
+            // not common to all the sounds that have been checked
             var soundInfo = metadata[checkedSounds[i]];
             foreach (var tag in AvailableTags.SelectedTags)
             {
                 soundInfo.AddTag(tag);
             }
 
-            selectedSoundInfo.SaveMetaFile();
+            soundInfo.SaveMetaFile();
         }
     }
 
@@ -535,11 +575,15 @@ public partial class MainWindow : Control
     {
         for (int i = 0; i < checkedSounds.Count; i++)
         {
+            // use RemoveTag instead of SetTags to preserve tags that are
+            // not common to all the sounds that have been checked
             var soundInfo = metadata[checkedSounds[i]];
             foreach (var tag in AssignedTags.SelectedTags)
             {
                 soundInfo.RemoveTag(tag);
             }
+
+            soundInfo.SaveMetaFile();
         }
 
         foreach (var tag in AssignedTags.SelectedTags)
