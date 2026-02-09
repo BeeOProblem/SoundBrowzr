@@ -1,7 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://cnqmreoccdwhp"]
+[gd_scene load_steps=8 format=3 uid="uid://cnqmreoccdwhp"]
 
 [ext_resource type="Script" uid="uid://cu11smy7acvgd" path="res://TagUi/TagUi.cs" id="1_bwdjv"]
 [ext_resource type="Texture2D" uid="uid://duoukshe7scjf" path="res://TagUi/TagUiBackground.png" id="2_4h7ro"]
+[ext_resource type="Texture2D" uid="uid://cej158xgs3575" path="res://TagUi/TagUiHighlight.png" id="3_5prd3"]
 
 [sub_resource type="Animation" id="Animation_bwdjv"]
 resource_name = "Default"
@@ -16,6 +17,18 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 0,
 "values": [Color(0.75, 0.75, 0.75, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Overlay:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
 }
 
 [sub_resource type="Animation" id="Animation_n7mmq"]
@@ -32,6 +45,18 @@ tracks/0/keys = {
 "update": 0,
 "values": [Color(0.75, 0.75, 0.75, 1)]
 }
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Overlay:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
 
 [sub_resource type="Animation" id="Animation_lni2q"]
 resource_name = "Selected"
@@ -47,6 +72,18 @@ tracks/0/keys = {
 "update": 0,
 "values": [Color(1, 1, 1, 1)]
 }
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Overlay:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_jlq81"]
 _data = {
@@ -56,7 +93,6 @@ _data = {
 }
 
 [node name="Tag" type="MarginContainer" node_paths=PackedStringArray("TagName", "Background", "AnimationPlayer")]
-anchors_preset = -1
 offset_right = 106.0
 offset_bottom = 51.0
 theme_override_constants/margin_left = 1
@@ -100,3 +136,16 @@ theme_override_constants/outline_size = 2
 text = "Tag Name"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="Overlay" type="NinePatchRect" parent="."]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("3_5prd3")
+region_rect = Rect2(0, 0, 80, 80)
+patch_margin_left = 16
+patch_margin_top = 18
+patch_margin_right = 16
+patch_margin_bottom = 18
+axis_stretch_horizontal = 2
+axis_stretch_vertical = 2
