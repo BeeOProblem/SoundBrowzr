@@ -51,7 +51,7 @@ _data = {
 &"Throb": SubResource("Animation_e7h7s")
 }
 
-[node name="MainWindow" type="Control" node_paths=PackedStringArray("ConfigWindow", "ScanOverlay", "TagSearchText", "AvailableTags", "TagEditor", "FilterIncludeTags", "FilterExcludeTags", "FileSystemTree", "FilePathLabel", "AudioStreamPlayer", "PlaybackPosition", "VolumeSlider", "AssignedTags", "SingleSoundToolbar", "SingleSoundTagToolbar", "OpenButton", "MultiSoundToolbar", "SelectionCountLabel")]
+[node name="MainWindow" type="Control" node_paths=PackedStringArray("ConfigWindow", "ScanOverlay", "TagSearchText", "AvailableTags", "TagEditor", "FilterIncludeTags", "FilterExcludeTags", "FileSystemTree", "FilePathLabel", "AudioStreamPlayer", "PlaybackPosition", "VolumeSlider", "AssignedTags", "SingleSoundToolbar", "OpenButton", "MultiSoundToolbar", "SelectionCountLabel")]
 custom_minimum_size = Vector2(0, 300)
 layout_mode = 3
 anchors_preset = 15
@@ -74,7 +74,6 @@ PlaybackPosition = NodePath("HSplitContainer/SoundInfo/SoundPlayer/HBoxContainer
 VolumeSlider = NodePath("HSplitContainer/SoundInfo/SoundPlayer/Volume")
 AssignedTags = NodePath("HSplitContainer/SoundInfo/TagEditor/HBoxContainer/AssignedTags/VBoxContainer/AssignedTagList")
 SingleSoundToolbar = NodePath("HSplitContainer/SoundInfo/SingleSoundToolbar")
-SingleSoundTagToolbar = NodePath("HSplitContainer/SoundInfo/TagEditor/HBoxContainer/AssignedTags/VBoxContainer/Toolbar")
 OpenButton = NodePath("HSplitContainer/SoundInfo/SingleSoundToolbar/Toolbar/Open")
 MultiSoundToolbar = NodePath("HSplitContainer/SoundInfo/MultipleSoundToolbar")
 SelectionCountLabel = NodePath("HSplitContainer/SoundInfo/MultipleSoundToolbar/CountLabel")

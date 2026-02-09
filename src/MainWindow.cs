@@ -51,8 +51,6 @@ public partial class MainWindow : Control
     [Export]
     Control SingleSoundToolbar;
     [Export]
-    Control SingleSoundTagToolbar;
-    [Export]
     Button OpenButton;
 
     [ExportCategory("Multi Sound Toolbar")]
@@ -312,7 +310,6 @@ public partial class MainWindow : Control
         SelectionCountLabel.Text = string.Format("{0} Sounds Selected", checkedSounds.Count);
         if (checkedSounds.Count > 0)
         {
-            //SingleSoundTagToolbar.Visible = false;
             SingleSoundToolbar.Visible = false;
             MultiSoundToolbar.Visible = true;
 
@@ -348,7 +345,6 @@ public partial class MainWindow : Control
         }
         else
         {
-            //SingleSoundTagToolbar.Visible = true;
             SingleSoundToolbar.Visible = true;
             MultiSoundToolbar.Visible = false;
 
