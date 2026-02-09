@@ -106,12 +106,22 @@ public partial class MainWindow : Control
         {
             using (var configStream = new StreamReader(configPath))
             {
-                string line;
-                while ((line = configStream.ReadLine()) != null)
+                string section = "";
+                string line = "";
+                while (line != null)
                 {
-                    // TODO: this is dumb, parse out section then section name then parse content
-                    if(line == "[search]")
+                    if (line == "[search]")
                     {
+                        section = "search";
+                    } 
+                    else if(line == "[commands]")
+                    {
+                        section = "commands";
+                    }
+
+                    // TODO: I hate these nested loops
+                    if (section == "search") 
+                    { 
                         string pathFromConfig;
                         while ((line = pathFromConfig = configStream.ReadLine()) != null)
                         {
@@ -119,23 +129,29 @@ public partial class MainWindow : Control
                             searchPaths.Add(pathFromConfig);
                         }
                     }
+                    else if(section == "commands")
+                    {
+                        while ((line = configStream.ReadLine()) != null)
+                        {
+                            if (line == "[search]") break;
 
-                    // not an else on purpose (cuz fallthrough from loop above, again this is dumb)
-                    if (line == "[commands]")
+                            string[] split = line.Split('=', StringSplitOptions.TrimEntries);
+                            switch (split[0])
+                            {
+                                case "path":
+                                    openCommand = split[1];
+                                    break;
+
+                                case "allow_multiple":
+                                    openMultiple = false;
+                                    bool.TryParse(split[1], out openMultiple);
+                                    break;
+                            }
+                        }
+                    }
+                    else
                     {
                         line = configStream.ReadLine();
-                        string[] split = line.Split('=', StringSplitOptions.TrimEntries);
-                        switch (split[0])
-                        {
-                            case "path":
-                                openCommand = split[1];
-                                break;
-
-                            case "allow_multiple":
-                                openMultiple = false;
-                                bool.TryParse(split[1], out openMultiple);
-                                break;
-                        }
                     }
                 }
             }
@@ -284,6 +300,8 @@ public partial class MainWindow : Control
     private void _OnOpenConfig()
     {
         ConfigWindow.SearchPaths = searchPaths;
+        ConfigWindow.OpenCommand = openCommand;
+        ConfigWindow.AllowOpenMultiple = openMultiple;
         ConfigWindow.Show();
     }
 
@@ -641,7 +659,7 @@ public partial class MainWindow : Control
             {
                 configWriter.WriteLine("[commands]");
                 configWriter.WriteLine(string.Format("path = {0}", openCommand));
-                configWriter.WriteLine(string.Format("allow_multiple = ", openMultiple));
+                configWriter.WriteLine(string.Format("allow_multiple = {0}", openMultiple));
                 configWriter.WriteLine();
                 configWriter.WriteLine("[search]");
                 foreach (var searchPath in searchPaths)
