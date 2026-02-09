@@ -70,7 +70,7 @@ FilterExcludeTags = NodePath("HSplitContainer/FileBrowser/TagFilters/FilterByTag
 FileSystemTree = NodePath("HSplitContainer/FileBrowser/FileTree")
 FilePathLabel = NodePath("HSplitContainer/SoundInfo/SingleSoundToolbar/SoundName")
 AudioStreamPlayer = NodePath("AudioStreamPlayer")
-PlaybackPosition = NodePath("HSplitContainer/SoundInfo/SoundPlayer/PlaybackPos")
+PlaybackPosition = NodePath("HSplitContainer/SoundInfo/SoundPlayer/HBoxContainer/PlaybackPos")
 VolumeSlider = NodePath("HSplitContainer/SoundInfo/SoundPlayer/Volume")
 AssignedTags = NodePath("HSplitContainer/SoundInfo/TagEditor/HBoxContainer/AssignedTags/VBoxContainer/AssignedTagList")
 SingleSoundToolbar = NodePath("HSplitContainer/SoundInfo/SingleSoundToolbar")
@@ -246,19 +246,33 @@ step = 0.01
 tick_count = 10
 ticks_on_borders = true
 
-[node name="PlaybackPos" type="HSlider" parent="HSplitContainer/SoundInfo/SoundPlayer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="HSplitContainer/SoundInfo/SoundPlayer"]
 layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.014
+anchors_preset = 12
 anchor_top = 1.0
-anchor_right = 0.958
+anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -5.98
-offset_top = -24.0
-offset_right = -0.0600586
-offset_bottom = -8.0
+offset_top = -16.0
 grow_horizontal = 2
 grow_vertical = 0
+
+[node name="Play" type="Button" parent="HSplitContainer/SoundInfo/SoundPlayer/HBoxContainer"]
+custom_minimum_size = Vector2(75, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+text = "Play"
+
+[node name="Stop" type="Button" parent="HSplitContainer/SoundInfo/SoundPlayer/HBoxContainer"]
+custom_minimum_size = Vector2(75, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+text = "Stop"
+
+[node name="PlaybackPos" type="HSlider" parent="HSplitContainer/SoundInfo/SoundPlayer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
 step = 0.05
 scrollable = false
 ticks_on_borders = true
@@ -287,25 +301,19 @@ clip_text = true
 [node name="Toolbar" type="HBoxContainer" parent="HSplitContainer/SoundInfo/SingleSoundToolbar"]
 layout_mode = 2
 
-[node name="Play" type="Button" parent="HSplitContainer/SoundInfo/SingleSoundToolbar/Toolbar"]
-custom_minimum_size = Vector2(100, 0)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-text = "Play Sound"
-
-[node name="Stop" type="Button" parent="HSplitContainer/SoundInfo/SingleSoundToolbar/Toolbar"]
-custom_minimum_size = Vector2(100, 0)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-text = "Stop"
-
 [node name="Open" type="Button" parent="HSplitContainer/SoundInfo/SingleSoundToolbar/Toolbar"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 disabled = true
 text = "Open"
+
+[node name="AddSoundTag" type="Button" parent="HSplitContainer/SoundInfo/SingleSoundToolbar/Toolbar"]
+layout_mode = 2
+text = "Tag"
+
+[node name="RemoveSoundTag" type="Button" parent="HSplitContainer/SoundInfo/SingleSoundToolbar/Toolbar"]
+layout_mode = 2
+text = "Untag"
 
 [node name="MultipleSoundToolbar" type="VBoxContainer" parent="HSplitContainer/SoundInfo"]
 visible = false
@@ -361,14 +369,6 @@ layout_mode = 2
 [node name="Label" type="Label" parent="HSplitContainer/SoundInfo/TagEditor/HBoxContainer/AssignedTags/VBoxContainer/Toolbar"]
 layout_mode = 2
 text = "Assigned Tags"
-
-[node name="AddSoundTag" type="Button" parent="HSplitContainer/SoundInfo/TagEditor/HBoxContainer/AssignedTags/VBoxContainer/Toolbar"]
-layout_mode = 2
-text = "+"
-
-[node name="RemoveSoundTag" type="Button" parent="HSplitContainer/SoundInfo/TagEditor/HBoxContainer/AssignedTags/VBoxContainer/Toolbar"]
-layout_mode = 2
-text = "-"
 
 [node name="AssignedTagList" type="ScrollContainer" parent="HSplitContainer/SoundInfo/TagEditor/HBoxContainer/AssignedTags/VBoxContainer" node_paths=PackedStringArray("TagContainer")]
 layout_mode = 2
@@ -464,14 +464,14 @@ mouse_filter = 2
 [connection signal="item_selected" from="HSplitContainer/FileBrowser/FileTree" to="." method="_OnFileTreeItemSelected"]
 [connection signal="pressed" from="HSplitContainer/FileBrowser/FileTree/Config" to="." method="_OnOpenConfig"]
 [connection signal="value_changed" from="HSplitContainer/SoundInfo/SoundPlayer/Volume" to="." method="_OnVolumeChanged"]
-[connection signal="drag_ended" from="HSplitContainer/SoundInfo/SoundPlayer/PlaybackPos" to="." method="_OnPlaybackPosDragEnd"]
-[connection signal="drag_started" from="HSplitContainer/SoundInfo/SoundPlayer/PlaybackPos" to="." method="_OnPlaybackPosDragStart"]
-[connection signal="value_changed" from="HSplitContainer/SoundInfo/SoundPlayer/PlaybackPos" to="." method="_OnPlaybackPosChanged"]
-[connection signal="pressed" from="HSplitContainer/SoundInfo/SingleSoundToolbar/Toolbar/Play" to="." method="_OnPlay"]
-[connection signal="pressed" from="HSplitContainer/SoundInfo/SingleSoundToolbar/Toolbar/Stop" to="." method="_OnStop"]
+[connection signal="pressed" from="HSplitContainer/SoundInfo/SoundPlayer/HBoxContainer/Play" to="." method="_OnPlay"]
+[connection signal="pressed" from="HSplitContainer/SoundInfo/SoundPlayer/HBoxContainer/Stop" to="." method="_OnStop"]
+[connection signal="drag_ended" from="HSplitContainer/SoundInfo/SoundPlayer/HBoxContainer/PlaybackPos" to="." method="_OnPlaybackPosDragEnd"]
+[connection signal="drag_started" from="HSplitContainer/SoundInfo/SoundPlayer/HBoxContainer/PlaybackPos" to="." method="_OnPlaybackPosDragStart"]
+[connection signal="value_changed" from="HSplitContainer/SoundInfo/SoundPlayer/HBoxContainer/PlaybackPos" to="." method="_OnPlaybackPosChanged"]
 [connection signal="pressed" from="HSplitContainer/SoundInfo/SingleSoundToolbar/Toolbar/Open" to="." method="_OnOpen"]
+[connection signal="pressed" from="HSplitContainer/SoundInfo/SingleSoundToolbar/Toolbar/AddSoundTag" to="." method="_OnAssignedTagsAdd"]
+[connection signal="pressed" from="HSplitContainer/SoundInfo/SingleSoundToolbar/Toolbar/RemoveSoundTag" to="." method="_OnAssignedTagsRemove"]
 [connection signal="pressed" from="HSplitContainer/SoundInfo/MultipleSoundToolbar/Toolbar/Open" to="." method="_OnOpen"]
 [connection signal="pressed" from="HSplitContainer/SoundInfo/MultipleSoundToolbar/Toolbar/Tag" to="." method="_OnAssignedTagsMassAdd"]
 [connection signal="pressed" from="HSplitContainer/SoundInfo/MultipleSoundToolbar/Toolbar/Untag" to="." method="_OnAssignedTagsMassRemove"]
-[connection signal="pressed" from="HSplitContainer/SoundInfo/TagEditor/HBoxContainer/AssignedTags/VBoxContainer/Toolbar/AddSoundTag" to="." method="_OnAssignedTagsAdd"]
-[connection signal="pressed" from="HSplitContainer/SoundInfo/TagEditor/HBoxContainer/AssignedTags/VBoxContainer/Toolbar/RemoveSoundTag" to="." method="_OnAssignedTagsRemove"]
