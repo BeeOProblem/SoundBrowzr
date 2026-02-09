@@ -141,7 +141,7 @@ offset_left = -2.0
 offset_top = 1.9999695
 offset_right = -120.00003
 offset_bottom = 0.9999695
-text = "Editor Can Open Multiple Files"
+text = "Command Accepts Multiple Files"
 
 [node name="AudioEditorFind" type="Button" parent="."]
 anchors_preset = -1
