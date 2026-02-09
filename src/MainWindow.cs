@@ -51,8 +51,6 @@ public partial class MainWindow : Control
     [Export]
     Control SingleSoundToolbar;
     [Export]
-    Control SingleSoundTagToolbar;
-    [Export]
     Button OpenButton;
 
     [ExportCategory("Multi Sound Toolbar")]
@@ -101,66 +99,7 @@ public partial class MainWindow : Control
         ConfigWindow.OnCancel += _OnConfigChangeCancel;
         ConfigWindow.OnOk += _OnConfigChangeOk;
 
-        string configPath = ProjectSettings.GlobalizePath(ConfigFilePath);
-        try
-        {
-            using (var configStream = new StreamReader(configPath))
-            {
-                string section = "";
-                string line = "";
-                while (line != null)
-                {
-                    if (line == "[search]")
-                    {
-                        section = "search";
-                    } 
-                    else if(line == "[commands]")
-                    {
-                        section = "commands";
-                    }
-
-                    // TODO: I hate these nested loops
-                    if (section == "search") 
-                    { 
-                        string pathFromConfig;
-                        while ((line = pathFromConfig = configStream.ReadLine()) != null)
-                        {
-                            if(line == "[commands]") { break; }
-                            searchPaths.Add(pathFromConfig);
-                        }
-                    }
-                    else if(section == "commands")
-                    {
-                        while ((line = configStream.ReadLine()) != null)
-                        {
-                            if (line == "[search]") break;
-
-                            string[] split = line.Split('=', StringSplitOptions.TrimEntries);
-                            switch (split[0])
-                            {
-                                case "path":
-                                    openCommand = split[1];
-                                    break;
-
-                                case "allow_multiple":
-                                    openMultiple = false;
-                                    bool.TryParse(split[1], out openMultiple);
-                                    break;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        line = configStream.ReadLine();
-                    }
-                }
-            }
-        }
-        catch (IOException)
-        {
-            // TODO: display error in UI if it's anything besides File Not Found
-        }
-
+        LoadConfigFile();
         if (searchPaths.Count > 0)
         {
             ConfigWindow.AllowCancel = true;
@@ -348,12 +287,7 @@ public partial class MainWindow : Control
         if (item.HasMeta("file"))
         {
             string soundFilePath = item.GetMeta("file").ToString();
-            selectedPath = soundFilePath;
-            selectedSoundInfo = metadata[soundFilePath];
-
-            FilePathLabel.Text = item.GetText(0);
-            AssignedTags.AssignTags(selectedSoundInfo.Tags);
-            LoadSound(soundFilePath);
+            LoadSound(item.GetText(0), soundFilePath);
             _OnPlay();
         }
     }
@@ -376,7 +310,6 @@ public partial class MainWindow : Control
         SelectionCountLabel.Text = string.Format("{0} Sounds Selected", checkedSounds.Count);
         if (checkedSounds.Count > 0)
         {
-            SingleSoundTagToolbar.Visible = false;
             SingleSoundToolbar.Visible = false;
             MultiSoundToolbar.Visible = true;
 
@@ -412,7 +345,6 @@ public partial class MainWindow : Control
         }
         else
         {
-            SingleSoundTagToolbar.Visible = true;
             SingleSoundToolbar.Visible = true;
             MultiSoundToolbar.Visible = false;
 
@@ -456,7 +388,7 @@ public partial class MainWindow : Control
 
         // TODO: sort tags by name on UI
         AddNewTag(newTag);
-        SaveTags();
+        SaveTagDefinitions();
     }
 
     private void _CreateTagOnCancel(object sender, EventArgs e)
@@ -481,7 +413,7 @@ public partial class MainWindow : Control
         TagDefinition originalTag = AvailableTags.SelectedTags.First();
         originalTag.Name = TagEditor.ModifiedTag.Name;
         originalTag.Color = TagEditor.ModifiedTag.Color;
-        SaveTags();
+        SaveTagDefinitions();
     }
 
     private void _EditTagOnCancel(object sender, EventArgs e)
@@ -534,8 +466,7 @@ public partial class MainWindow : Control
 
     private void _OnFilterReset()
     {
-        FilterIncludeTags.AssignTags([]);
-        FilterExcludeTags.AssignTags([]);
+        ClearFilters();
         UpdateTreeFilter(treeRoot);
     }
 
@@ -650,6 +581,69 @@ public partial class MainWindow : Control
         AudioStreamPlayer.VolumeLinear = value;
     }
 
+    private void LoadConfigFile()
+    {
+        string configPath = ProjectSettings.GlobalizePath(ConfigFilePath);
+        try
+        {
+            using (var configStream = new StreamReader(configPath))
+            {
+                string section = "";
+                string line = "";
+                while (line != null)
+                {
+                    if (line == "[search]")
+                    {
+                        section = "search";
+                    }
+                    else if (line == "[commands]")
+                    {
+                        section = "commands";
+                    }
+
+                    // TODO: I hate these nested loops
+                    if (section == "search")
+                    {
+                        string pathFromConfig;
+                        while ((line = pathFromConfig = configStream.ReadLine()) != null)
+                        {
+                            if (line == "[commands]") { break; }
+                            searchPaths.Add(pathFromConfig);
+                        }
+                    }
+                    else if (section == "commands")
+                    {
+                        while ((line = configStream.ReadLine()) != null)
+                        {
+                            if (line == "[search]") break;
+
+                            string[] split = line.Split('=', StringSplitOptions.TrimEntries);
+                            switch (split[0])
+                            {
+                                case "path":
+                                    openCommand = split[1];
+                                    break;
+
+                                case "allow_multiple":
+                                    openMultiple = false;
+                                    bool.TryParse(split[1], out openMultiple);
+                                    break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        line = configStream.ReadLine();
+                    }
+                }
+            }
+        }
+        catch (IOException)
+        {
+            // TODO: display error in UI if it's anything besides File Not Found
+        }
+    }
+
     private void SaveConfigFile()
     {
         try
@@ -711,7 +705,7 @@ public partial class MainWindow : Control
         }
     }
 
-    private void SaveTags()
+    private void SaveTagDefinitions()
     {
         ConfigFile tagDefinitionFile = new ConfigFile();
         foreach(TagDefinition tag in allTags)
@@ -726,6 +720,10 @@ public partial class MainWindow : Control
 
     private void RescanFilesystem()
     {
+        ClearFilters();
+        MultiSoundToolbar.Visible = false;
+        SingleSoundToolbar.Visible = true;
+        LoadSound(null, null);
         FileSystemTree.Clear();
         metadata.Clear();
 
@@ -805,6 +803,12 @@ public partial class MainWindow : Control
         TagAdded?.Invoke(this, new TagEventArgs(newTag));
     }
 
+    private void ClearFilters()
+    {
+        FilterIncludeTags.AssignTags([]);
+        FilterExcludeTags.AssignTags([]);
+    }
+
     private bool UpdateTreeFilter(TreeItem directoryItem)
     {
         bool anyChildVisible = false;
@@ -844,21 +848,36 @@ public partial class MainWindow : Control
         return shouldInclude;
     }
 
-    private void LoadSound(string path)
+    private void LoadSound(string title, string soundFilePath)
     {
+        if(string.IsNullOrEmpty(title) || string.IsNullOrEmpty(soundFilePath))
+        {
+            FilePathLabel.Text = title;
+            selectedPath = soundFilePath;
+            AssignedTags.AssignTags([]);
+            AudioStreamPlayer.Stream = null;
+            PlaybackPosition.SetValueNoSignal(0);
+            return;
+        }
+
+        FilePathLabel.Text = title;
+        selectedPath = soundFilePath;
+        selectedSoundInfo = metadata[soundFilePath];
+        AssignedTags.AssignTags(selectedSoundInfo.Tags);
+
         // TODO: async load
         AudioStream stream = null;
-        if (path.EndsWith(".wav"))
+        if (soundFilePath.EndsWith(".wav"))
         {
-            stream = AudioStreamWav.LoadFromFile(path);
+            stream = AudioStreamWav.LoadFromFile(soundFilePath);
         }
-        else if (path.EndsWith(".ogg"))
+        else if (soundFilePath.EndsWith(".ogg"))
         {
-            stream = AudioStreamOggVorbis.LoadFromFile(path);
+            stream = AudioStreamOggVorbis.LoadFromFile(soundFilePath);
         }
-        else if (path.EndsWith(".mp3"))
+        else if (soundFilePath.EndsWith(".mp3"))
         {
-            stream = AudioStreamMP3.LoadFromFile(path);
+            stream = AudioStreamMP3.LoadFromFile(soundFilePath);
         }
 
         AudioStreamPlayer.Stream = stream;
