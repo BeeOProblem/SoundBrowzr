@@ -65,4 +65,5 @@ On the right side of each sound listed int the sound file list is a checkbox. Th
 multiple sound files at once. When one or more sounds are checked the Tag and Untag buttons become Tag All and
 Untag All and the list of assigned tags will only show tags that are common to all the sounds you have checked.
 
-Clicking the Open button with multiple sounds checked will open all of them at once.
+In addition the Open button will change to Open All when you have checked sounds on the list. Clicking the
+Open All button with multiple sounds checked will open all of them at once.
